@@ -8,7 +8,7 @@
     "
   >
     <h2 style="margin-bottom: 1em">Web Scraper</h2>
-    <div style="width: 30%">
+    <div style="width: 25%">
       <div style="margin-bottom: 1em">
         <b-form-input
           v-model="text"
@@ -23,22 +23,28 @@
           placeholder="Add a keyword"
         ></b-form-tags>
       </div>
+      <div
+        style="display: flex; justify-content: space-between; margin-top: 1em"
+      >
+        <b-button @click="submitLink" variant="primary" style="width: 5em"
+          >Submit</b-button
+        >
+        <b-button @click="clearFields" variant="secondary" style="width: 5em"
+          >Clear</b-button
+        >
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-// import FormTag from "./FormTag.vue";
-
 export default {
-  // components: {
-  //   FormTag,
-  // },
-  // data() {
-  //   return {
-  //     link: "",
-  //   };
-  // },
+  data() {
+    return {
+      text: "",
+      value: [],
+    };
+  },
   methods: {
     handlePaste(event) {
       event.preventDefault();
@@ -47,6 +53,10 @@ export default {
     },
     submitLink() {
       console.log("Submitted link:", this.link);
+    },
+    clearFields() {
+      this.text = "";
+      this.value = [];
     },
   },
 };
