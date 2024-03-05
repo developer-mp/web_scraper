@@ -11,7 +11,8 @@
     <div style="width: 25%">
       <div style="margin-bottom: 1em">
         <b-form-input
-          v-model="text"
+          v-model="url"
+          type="text"
           placeholder="Paste a link"
           class="input-focus"
         ></b-form-input>
@@ -19,14 +20,19 @@
       <div>
         <b-form-tags
           input-id="tags-basic"
-          v-model="value"
+          v-model="keywords"
+          type="text"
           placeholder="Add a keyword"
         ></b-form-tags>
       </div>
       <div
         style="display: flex; justify-content: space-between; margin-top: 1em"
       >
-        <b-button @click="submitLink" variant="primary" style="width: 5em"
+        <b-button
+          @click="submitLink"
+          variant="primary"
+          style="width: 5em"
+          :disabled="isSubmitDisabled"
           >Submit</b-button
         >
         <b-button @click="clearFields" variant="secondary" style="width: 5em"
@@ -38,25 +44,35 @@
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   data() {
     return {
-      text: "",
-      value: [],
+      url: "",
+      keywords: [],
     };
   },
-  methods: {
-    handlePaste(event) {
-      event.preventDefault();
-      const pastedText = event.clipboardData.getData("text");
-      this.link = pastedText;
+  computed: {
+    isSubmitDisabled() {
+      return !this.url.trim() || this.keywords.length == 0;
     },
-    submitLink() {
-      console.log("Submitted link:", this.link);
+  },
+  methods: {
+    async submitLink() {
+      try {
+        const response = await axios.post("http://localhost:8080/scrape", {
+          url: this.url,
+          keywords: this.keywords,
+        });
+        console.log(response.data);
+      } catch (error) {
+        console.error("Error:", error);
+      }
     },
     clearFields() {
-      this.text = "";
-      this.value = [];
+      this.url = "";
+      this.keywords = [];
     },
   },
 };
