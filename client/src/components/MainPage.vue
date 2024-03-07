@@ -40,6 +40,45 @@
         >
       </div>
     </div>
+    <b-modal
+      v-model="showPreviewModal"
+      id="previewModal"
+      title="Preview Result"
+      @hidden="cancelPreview"
+      hide-footer
+    >
+      <div
+        class="d-block text-center"
+        style="margin-top: 2em"
+        v-if="!showPreviewResult"
+      >
+        <div>The scraping process has been completed successfully.</div>
+        <div>Do you want to preview the result?</div>
+      </div>
+      <div v-if="showPreviewResult">
+        <p v-for="(sentence, index) in sentences" :key="index">
+          {{ sentence }}
+        </p>
+      </div>
+      <div
+        style="display: flex; justify-content: space-between; margin-top: 2em"
+      >
+        <b-button
+          class="mt-3"
+          style="width: 5em"
+          variant="primary"
+          @click="previewResult"
+          >Preview</b-button
+        >
+        <b-button
+          class="mt-3"
+          style="width: 5em"
+          variant="secondary"
+          @click="cancelPreview"
+          >Cancel</b-button
+        >
+      </div>
+    </b-modal>
   </div>
 </template>
 
@@ -51,6 +90,9 @@ export default {
     return {
       url: "",
       keywords: [],
+      showPreviewModal: false,
+      showPreviewResult: false,
+      sentences: [],
     };
   },
   computed: {
@@ -65,7 +107,8 @@ export default {
           url: this.url,
           keywords: this.keywords,
         });
-        console.log(response.data);
+        this.sentences = response.data;
+        this.showPreviewModal = true;
       } catch (error) {
         console.error("Error:", error);
       }
@@ -73,6 +116,13 @@ export default {
     clearFields() {
       this.url = "";
       this.keywords = [];
+    },
+    previewResult() {
+      this.showPreviewResult = true;
+    },
+    cancelPreview() {
+      this.showPreviewResult = false;
+      this.$bvModal.hide("previewModal");
     },
   },
 };
