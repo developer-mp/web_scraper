@@ -42,11 +42,11 @@ func handleScrape(c *gin.Context) {
 	}
 
 	if len(sentences) == 0 {
-		c.JSON(http.StatusOK, gin.H{"message": "No sentences found for the given keywords"})
+		c.JSON(http.StatusOK, gin.H{"message": "No sentences found for the given keywords."})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"sentences": sentences})
+	c.JSON(http.StatusOK, gin.H{"success": sentences})
 }
 
 func scrapeWebpage(url string, keywords []string) ([]string, error) {

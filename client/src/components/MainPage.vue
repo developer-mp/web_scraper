@@ -1,41 +1,30 @@
 <template>
-  <div
-    style="
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    "
-  >
-    <h2 style="margin-bottom: 1em">Web Scraper</h2>
-    <div style="width: 25%">
-      <div style="margin-bottom: 1em">
+  <div class="container">
+    <h2 class="header">Web Scraper</h2>
+    <div class="form-wrapper">
+      <div class="form-input">
         <b-form-input
           v-model="url"
           type="text"
           placeholder="Paste a link"
-          class="input-focus"
         ></b-form-input>
       </div>
       <div>
         <b-form-tags
-          input-id="tags-basic"
           v-model="keywords"
           type="text"
           placeholder="Add a keyword"
         ></b-form-tags>
       </div>
-      <div
-        style="display: flex; justify-content: space-between; margin-top: 1em"
-      >
+      <div class="button-container">
         <b-button
           @click="submitLink"
           variant="primary"
-          style="width: 5em"
+          class="button"
           :disabled="isSubmitDisabled"
           >Submit</b-button
         >
-        <b-button @click="clearFields" variant="secondary" style="width: 5em"
+        <b-button @click="clearFields" variant="secondary" class="button"
           >Clear</b-button
         >
       </div>
@@ -47,40 +36,75 @@
       @hidden="cancelPreview"
       hide-footer
     >
-      <div
-        class="d-block text-center"
-        style="margin-top: 2em"
-        v-if="!showPreviewResult"
-      >
-        <div>The scraping process has been completed successfully.</div>
-        <div>Do you want to preview the result?</div>
+      <div class="preview">
+        <div v-if="!showPreviewResult">
+          <div>The scraping process has been completed successfully.</div>
+          <div>Do you want to preview the result?</div>
+        </div>
+        <div
+          v-if="showPreviewResult"
+          style="text-align: justify; text-justify: auto"
+        >
+          <p v-for="(sentence, index) in sentences" :key="index">
+            {{ sentence }}
+          </p>
+        </div>
       </div>
-      <div v-if="showPreviewResult">
-        <p v-for="(sentence, index) in sentences" :key="index">
-          {{ sentence }}
-        </p>
-      </div>
-      <div
-        style="display: flex; justify-content: space-between; margin-top: 2em"
-      >
-        <b-button
-          class="mt-3"
-          style="width: 5em"
-          variant="primary"
-          @click="previewResult"
+      <div class="preview-button">
+        <b-button class="button mt-3" variant="primary" @click="previewResult"
           >Preview</b-button
         >
-        <b-button
-          class="mt-3"
-          style="width: 5em"
-          variant="secondary"
-          @click="cancelPreview"
+        <b-button class="button mt-3" variant="secondary" @click="cancelPreview"
           >Cancel</b-button
         >
       </div>
     </b-modal>
   </div>
 </template>
+
+<style>
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.header {
+  margin-bottom: 1em;
+}
+
+.form-wrapper {
+  width: 40%;
+}
+
+.form-input {
+  margin-bottom: 1em;
+}
+.button-container {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1em;
+}
+
+.button {
+  width: 5em;
+}
+
+.preview {
+  min-height: 7em;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.preview-button {
+  display: flex;
+  justify-content: space-between;
+}
+</style>
 
 <script>
 import axios from "axios";
