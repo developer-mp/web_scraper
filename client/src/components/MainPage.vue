@@ -51,8 +51,19 @@
         </div>
       </div>
       <div class="preview-button">
-        <b-button class="button mt-3" variant="primary" @click="previewResult"
+        <b-button
+          v-if="!showPreviewResult"
+          class="button mt-3"
+          variant="primary"
+          @click="previewResult"
           >Preview</b-button
+        >
+        <b-button
+          v-else
+          class="button mt-3"
+          variant="primary"
+          @click="saveResult"
+          >Save</b-button
         >
         <b-button class="button mt-3" variant="secondary" @click="cancelPreview"
           >Cancel</b-button
@@ -108,6 +119,7 @@
 
 <script>
 import axios from "axios";
+import { saveAs } from "file-saver";
 
 export default {
   data() {
@@ -131,7 +143,7 @@ export default {
           url: this.url,
           keywords: this.keywords,
         });
-        this.sentences = response.data;
+        this.sentences = response.data.success;
         this.showPreviewModal = true;
       } catch (error) {
         console.error("Error:", error);
@@ -143,6 +155,14 @@ export default {
     },
     previewResult() {
       this.showPreviewResult = true;
+    },
+    saveResult() {
+      const textToSave = this.sentences.join("\n");
+      const blob = new Blob([textToSave], {
+        type: "text/plain;charset=utf-8",
+      });
+      saveAs(blob, "scraped_data.txt");
+      this.cancelPreview();
     },
     cancelPreview() {
       this.showPreviewResult = false;
