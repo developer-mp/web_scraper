@@ -2,7 +2,7 @@
   <div>
     <NavBarElement />
     <div class="container-main">
-      <h2 class="header">Web Scraper</h2>
+      <h2 class="main-header">Web Scraper</h2>
       <div class="form-wrapper">
         <b-form-input
           v-model="url"
@@ -31,11 +31,11 @@
       <b-modal
         v-model="showPreviewModal"
         id="previewModal"
-        title="Preview Result"
+        title="Results"
         @hidden="cancelPreview"
         hide-footer
       >
-        <div class="preview">
+        <div class="preview-result">
           <div v-if="!showPreviewResult">
             <div>The scraping process has been completed successfully.</div>
             <div>Do you want to preview the result?</div>
@@ -58,13 +58,6 @@
             >Preview</b-button
           >
           <b-button
-            v-else
-            class="button mt-3"
-            variant="primary"
-            @click="doneResult"
-            >Done</b-button
-          >
-          <b-button
             class="button mt-3"
             variant="secondary"
             @click="cancelPreview"
@@ -85,7 +78,7 @@
   justify-content: center;
 }
 
-.header {
+.main-header {
   margin-top: 1em;
   margin-bottom: 1em;
 }
@@ -108,7 +101,7 @@
   width: 5em;
 }
 
-.preview {
+.preview-result {
   min-height: 7em;
   text-align: center;
   display: flex;
@@ -199,4 +192,3 @@ export default {
   },
 };
 </script>
-./NavBarElement.vue
