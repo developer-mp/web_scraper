@@ -1,9 +1,9 @@
 <template>
   <b-navbar type="dark" variant="info" class="fixed-top">
     <b-navbar-nav>
-      <b-nav-item href="#">Home</b-nav-item>
-      <b-nav-item href="#">About</b-nav-item>
-      <b-nav-item href="#">Results</b-nav-item>
+      <b-nav-item href="/">Home</b-nav-item>
+      <b-nav-item href="/about">About</b-nav-item>
+      <b-nav-item href="/results">Results</b-nav-item>
     </b-navbar-nav>
     <b-navbar-nav class="ml-auto">
       <b-nav-item-dropdown text="EN" right>

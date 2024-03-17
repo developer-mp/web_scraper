@@ -1,17 +1,12 @@
 <template>
   <div id="app">
-    <MainPage />
+    <router-view />
   </div>
 </template>
 
 <script>
-import MainPage from "./components/MainPage.vue";
-
 export default {
   name: "App",
-  components: {
-    MainPage,
-  },
 };
 </script>
 
@@ -25,4 +20,3 @@ export default {
   margin-top: 60px;
 }
 </style>
-./components/MainPage.vue
