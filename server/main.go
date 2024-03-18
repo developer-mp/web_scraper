@@ -1,9 +1,11 @@
 package main
 
 import (
+	"crypto/rand"
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
+	"time"
 
 	"log"
 	"net/http"
@@ -56,9 +58,6 @@ func handleScrape(c *gin.Context) {
 		return
 	}
 
-	log.Println("URL:", form.URL)
-	log.Println("Keywords:", form.Keywords)
-
 	sentences, err := scrapeWebpage(form.URL, form.Keywords)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -70,11 +69,11 @@ func handleScrape(c *gin.Context) {
 		return
 	}
 
-	err = storeInDynamoDB(form.URL, sentences)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
+	err = storeInDynamoDB(sentences)
+    if err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+        return
+    }
 
 	c.JSON(http.StatusOK, gin.H{"success": sentences})
 }
@@ -106,8 +105,8 @@ func scrapeWebpage(url string, keywords []string) ([]string, error) {
 	return sentences, nil
 }
 
-func storeInDynamoDB(url string, sentences []string) error {
-	AWSConfig, err := readAppConfig("appconfig.json")
+func storeInDynamoDB(sentences []string) error {
+    AWSConfig, err := readAppConfig("appconfig.json")
     if err != nil {
         return err
     }
@@ -121,37 +120,47 @@ func storeInDynamoDB(url string, sentences []string) error {
         ),
     }))
 
-	svc := dynamodb.New(sess)
+    svc := dynamodb.New(sess)
 
-	resultID := generateHash(url)
+    resultID := generateHashID()
+	searchText := strings.Join(sentences, " ")
 
-	for _, sentence := range sentences {
-        item := ResultItem{
-            ResultID: resultID,
-            Text:     []string{sentence},
-        }
+    item := ResultItem{
+        ResultID: resultID,
+        Text:     []string{searchText},
+    }
 
     itemBytes, err := dynamodbattribute.MarshalMap(item)
-        if err != nil {
-            return err
-        }
+    if err != nil {
+        return err
+    }
 
-        _, err = svc.PutItem(&dynamodb.PutItemInput{
-            TableName: aws.String("result"),
-            Item:      itemBytes,
-        })
-        if err != nil {
-            return err
-        }
+    _, err = svc.PutItem(&dynamodb.PutItemInput{
+        TableName: aws.String("result"),
+        Item:      itemBytes,
+    })
+    if err != nil {
+        return err
     }
 
     return nil
 }
 
-func generateHash(data string) string {
+func generateHashID() string {
+    timestamp := time.Now().UnixNano() / int64(time.Millisecond)
+
+	randomBytes := make([]byte, 8)
+    _, err := rand.Read(randomBytes)
+    if err != nil {
+        return ""
+    }
+
+    data := append([]byte(string(rune(timestamp))), randomBytes...)
+
     hasher := sha256.New()
-    hasher.Write([]byte(data))
+    hasher.Write(data)
     hash := hex.EncodeToString(hasher.Sum(nil))
+
     return hash
 }
 
