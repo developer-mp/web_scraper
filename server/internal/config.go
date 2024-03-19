@@ -1,4 +1,4 @@
-package main
+package config
 
 import (
 	"encoding/json"
@@ -13,7 +13,7 @@ type AppConfig struct {
 	} `json:"AWS"`
 }
 
-func readAppConfig(filename string) (*AppConfig, error) {
+func ReadAppConfig(filename string) (*AppConfig, error) {
     data, err := os.ReadFile(filename)
     if err != nil {
         return nil, err

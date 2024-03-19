@@ -1,7 +1,10 @@
-package main
+package dynamodb
 
 import (
 	"strings"
+
+	config "server/internal"
+	hash "server/utils"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
@@ -15,8 +18,8 @@ type ResultItem struct {
 	Text     []string `json:"text"`
 }
 
-func storeInDynamoDB(sentences []string) error {
-    AWSConfig, err := readAppConfig("appconfig.json")
+func StoreInDynamoDB(sentences []string) error {
+    AWSConfig, err := config.ReadAppConfig("appconfig.json")
     if err != nil {
         return err
     }
@@ -32,7 +35,7 @@ func storeInDynamoDB(sentences []string) error {
 
     svc := dynamodb.New(sess)
 
-    resultID := generateHashID()
+    resultID := hash.GenerateHashID()
 	searchText := strings.Join(sentences, " ")
 
     item := ResultItem{

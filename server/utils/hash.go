@@ -1,4 +1,4 @@
-package main
+package hash
 
 import (
 	"crypto/rand"
@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func generateHashID() string {
+func GenerateHashID() string {
     timestamp := time.Now().UnixNano() / int64(time.Millisecond)
 
 	randomBytes := make([]byte, 8)

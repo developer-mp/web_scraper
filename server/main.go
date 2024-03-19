@@ -3,6 +3,8 @@ package main
 import (
 	"log"
 
+	"server/pkg/scrape"
+
 	"github.com/gin-gonic/gin"
 	"github.com/rs/cors"
 )
@@ -14,6 +16,6 @@ func main() {
 		corsMiddleware.HandlerFunc(c.Writer, c.Request)
 		c.Next()
 	})
-	router.POST("/scrape", handleScrape)
+	router.POST("/scrape", scrape.HandleScrape)
 	log.Fatal(router.Run(":8080"))
 }

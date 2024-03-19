@@ -1,14 +1,16 @@
-package main
+package scrape
 
 import (
 	"net/http"
 	"strings"
 
+	dynamodb "server/pkg/db"
+
 	"github.com/PuerkitoBio/goquery"
 	"github.com/gin-gonic/gin"
 )
 
-func handleScrape(c *gin.Context) {
+func HandleScrape(c *gin.Context) {
 	var form struct {
 		URL      string   `form:"url"`
 		Keywords []string `form:"keywords"`
@@ -30,7 +32,7 @@ func handleScrape(c *gin.Context) {
 		return
 	}
 
-	err = storeInDynamoDB(sentences)
+	err = dynamodb.StoreInDynamoDB(sentences)
     if err != nil {
         c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
         return
