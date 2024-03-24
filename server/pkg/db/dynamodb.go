@@ -2,6 +2,7 @@ package dynamodb
 
 import (
 	"strings"
+	"time"
 
 	config "server/internal"
 	hash "server/utils"
@@ -16,9 +17,12 @@ import (
 type ResultItem struct {
 	ResultID string   `json:"result_id"`
 	Text     []string `json:"text"`
+    Keywords []string `json:"keywords"`
+    Link     string   `json:"link"`
+    Timestamp string   `json:"timestamp"`
 }
 
-func StoreInDynamoDB(sentences []string) error {
+func StoreInDynamoDB(sentences []string, keywords []string, link string) error {
     AWSConfig, err := config.ReadAppConfig("appconfig.json")
     if err != nil {
         return err
@@ -37,10 +41,14 @@ func StoreInDynamoDB(sentences []string) error {
 
     resultID := hash.GenerateHashID()
 	searchText := strings.Join(sentences, " ")
+    currentTime := time.Now().Format(time.RFC3339)
 
     item := ResultItem{
         ResultID: resultID,
         Text:     []string{searchText},
+        Keywords: keywords,
+        Link:     link,
+        Timestamp: currentTime,
     }
 
     itemBytes, err := dynamodbattribute.MarshalMap(item)

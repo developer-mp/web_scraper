@@ -2,7 +2,7 @@
   <div>
     <NavBarElement />
     <div class="container-about">
-      <h2 class="about-header">About application</h2>
+      <h2 class="about-header">About Application</h2>
       <div class="about-text">
         <ul>
           <li>
