@@ -10,7 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func HandleScrape(c *gin.Context) {
+func SaveScrapingResults(c *gin.Context) {
 	var form struct {
 		URL      string   `form:"url"`
 		Keywords []string `form:"keywords"`
@@ -32,7 +32,7 @@ func HandleScrape(c *gin.Context) {
 		return
 	}
 
-	err = dynamodb.StoreInDynamoDB(sentences, form.Keywords, form.URL)
+	err = dynamodb.SaveScrapingResults(sentences, form.Keywords, form.URL)
     if err != nil {
         c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
         return
@@ -66,4 +66,14 @@ func scrapeWebpage(url string, keywords []string) ([]string, error) {
 	})
 
 	return sentences, nil
+}
+
+func GetScrapingResults(c *gin.Context) {
+	results, err := dynamodb.GetScrapingResults()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, results)
 }

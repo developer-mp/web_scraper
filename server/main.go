@@ -16,6 +16,7 @@ func main() {
 		corsMiddleware.HandlerFunc(c.Writer, c.Request)
 		c.Next()
 	})
-	router.POST("/scrape", scrape.HandleScrape)
+	router.POST("api/results", scrape.SaveScrapingResults)
+	router.GET("api/results", scrape.GetScrapingResults)
 	log.Fatal(router.Run(":8080"))
 }

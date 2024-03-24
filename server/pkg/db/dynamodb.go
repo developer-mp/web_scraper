@@ -22,7 +22,7 @@ type ResultItem struct {
     Timestamp string   `json:"timestamp"`
 }
 
-func StoreInDynamoDB(sentences []string, keywords []string, link string) error {
+func SaveScrapingResults(sentences []string, keywords []string, link string) error {
     AWSConfig, err := config.ReadAppConfig("appconfig.json")
     if err != nil {
         return err
@@ -65,4 +65,43 @@ func StoreInDynamoDB(sentences []string, keywords []string, link string) error {
     }
 
     return nil
+}
+
+func GetScrapingResults() ([]ResultItem, error) {
+	AWSConfig, err := config.ReadAppConfig("appconfig.json")
+	if err != nil {
+		return nil, err
+	}
+
+	sess := session.Must(session.NewSession(&aws.Config{
+		Region: aws.String(AWSConfig.AWS.AWSRegion),
+		Credentials: credentials.NewStaticCredentials(
+			AWSConfig.AWS.AWSAccessKeyID,
+			AWSConfig.AWS.AWSSecretAccessKey,
+			"",
+		),
+	}))
+
+	svc := dynamodb.New(sess)
+
+	params := &dynamodb.ScanInput{
+		TableName: aws.String("result"),
+	}
+
+	result, err := svc.Scan(params)
+	if err != nil {
+		return nil, err
+	}
+
+	var items []ResultItem
+	for _, item := range result.Items {
+		var resultItem ResultItem
+		err := dynamodbattribute.UnmarshalMap(item, &resultItem)
+		if err != nil {
+			return nil, err
+		}
+		items = append(items, resultItem)
+	}
+
+	return items, nil
 }

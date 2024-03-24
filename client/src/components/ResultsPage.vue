@@ -19,8 +19,8 @@
                 >
               </b-dropdown>
             </b-button-group>
-          </template></b-table
-        >
+          </template>
+        </b-table>
       </div>
       <FooterElement />
     </div>
@@ -42,6 +42,7 @@
 </style>
 
 <script>
+import axios from "axios";
 import FooterElement from "./FooterElement.vue";
 import NavBarElement from "./NavBarElement.vue";
 
@@ -52,17 +53,22 @@ export default {
   },
   data() {
     return {
-      items: [
-        {
-          Search: "Search1",
-          Link: "google.com",
-          Date: "2024-05-09",
-          Actions: "Actions",
-        },
-      ],
+      items: [],
     };
   },
+  mounted() {
+    this.fetchResults();
+  },
   methods: {
+    async fetchResults() {
+      try {
+        const response = await axios.get("http://localhost:8080/api/results");
+        this.items = response.data;
+        console.log(this.items);
+      } catch (error) {
+        console.error("Error fetching results:", error);
+      }
+    },
     deleteItem(item) {
       const index = this.items.indexOf(item);
       if (index !== -1) {

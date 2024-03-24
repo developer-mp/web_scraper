@@ -58,6 +58,13 @@
             >Preview</b-button
           >
           <b-button
+            v-if="showPreviewResult"
+            class="button mt-3"
+            variant="primary"
+            @click="goResultsPage"
+            >Results</b-button
+          >
+          <b-button
             class="button mt-3"
             variant="secondary"
             @click="cancelPreview"
@@ -103,6 +110,7 @@
 
 .preview-result {
   min-height: 7em;
+  min-width: 10em !important;
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -121,6 +129,7 @@ import axios from "axios";
 import { saveAs } from "file-saver";
 import FooterElement from "./FooterElement.vue";
 import NavBarElement from "./NavBarElement.vue";
+import router from "./../router";
 
 export default {
   components: {
@@ -152,7 +161,7 @@ export default {
   methods: {
     async submitLink() {
       try {
-        const response = await axios.post("http://localhost:8080/scrape", {
+        const response = await axios.post("http://localhost:8080/api/results", {
           url: this.url,
           keywords: this.keywords,
         });
@@ -188,6 +197,9 @@ export default {
     cancelPreview() {
       this.showPreviewResult = false;
       this.$bvModal.hide("previewModal");
+    },
+    goResultsPage() {
+      router.push("/results");
     },
   },
 };
