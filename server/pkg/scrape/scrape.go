@@ -10,7 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func SaveScrapingResults(c *gin.Context) {
+func DisplayScrapingResults(c *gin.Context) {
 	var form struct {
 		URL      string   `form:"url"`
 		Keywords []string `form:"keywords"`
@@ -21,7 +21,7 @@ func SaveScrapingResults(c *gin.Context) {
 		return
 	}
 
-	sentences, err := scrapeWebpage(form.URL, form.Keywords)
+	sentences, err := ScrapeWebpage(form.URL, form.Keywords)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -32,16 +32,16 @@ func SaveScrapingResults(c *gin.Context) {
 		return
 	}
 
-	err = dynamodb.SaveScrapingResults(sentences, form.Keywords, form.URL)
-    if err != nil {
-        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-        return
-    }
+	// err = dynamodb.SaveScrapingResults(sentences, form.Keywords, form.URL)
+    // if err != nil {
+    //     c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+    //     return
+    // }
 
 	c.JSON(http.StatusOK, gin.H{"success": sentences})
 }
 
-func scrapeWebpage(url string, keywords []string) ([]string, error) {
+func ScrapeWebpage(url string, keywords []string) ([]string, error) {
 	var sentences []string
 
 	resp, err := http.Get(url)
@@ -66,6 +66,28 @@ func scrapeWebpage(url string, keywords []string) ([]string, error) {
 	})
 
 	return sentences, nil
+}
+
+func SaveScrapingResults(c *gin.Context) {
+    var requestData struct {
+        URL        string   `json:"url"`
+        Keywords   []string `json:"keywords"`
+        ResultName string   `json:"resultName"`
+        Sentences  []string `json:"sentences"`
+    }
+
+    if err := c.BindJSON(&requestData); err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+        return
+    }
+
+    err := dynamodb.SaveScrapingResults(requestData.URL, requestData.Keywords, requestData.ResultName, requestData.Sentences)
+    if err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+        return
+    }
+
+    c.JSON(http.StatusOK, gin.H{"message": "Scraping results saved successfully"})
 }
 
 func GetScrapingResults(c *gin.Context) {

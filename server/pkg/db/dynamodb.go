@@ -16,13 +16,14 @@ import (
 
 type ResultItem struct {
 	ResultID string   `json:"result_id"`
+	ResultName string `json:"result_name"`
 	Text     []string `json:"text"`
     Keywords []string `json:"keywords"`
     Link     string   `json:"link"`
     Timestamp string   `json:"timestamp"`
 }
 
-func SaveScrapingResults(sentences []string, keywords []string, link string) error {
+func SaveScrapingResults(link string, keywords []string, resultName string, sentences []string) error {
     AWSConfig, err := config.ReadAppConfig("appconfig.json")
     if err != nil {
         return err
@@ -45,6 +46,7 @@ func SaveScrapingResults(sentences []string, keywords []string, link string) err
 
     item := ResultItem{
         ResultID: resultID,
+		ResultName: resultName,
         Text:     []string{searchText},
         Keywords: keywords,
         Link:     link,
@@ -57,7 +59,7 @@ func SaveScrapingResults(sentences []string, keywords []string, link string) err
     }
 
     _, err = svc.PutItem(&dynamodb.PutItemInput{
-        TableName: aws.String("result"),
+        TableName: aws.String("results"),
         Item:      itemBytes,
     })
     if err != nil {
@@ -85,7 +87,7 @@ func GetScrapingResults() ([]ResultItem, error) {
 	svc := dynamodb.New(sess)
 
 	params := &dynamodb.ScanInput{
-		TableName: aws.String("result"),
+		TableName: aws.String("results"),
 	}
 
 	result, err := svc.Scan(params)

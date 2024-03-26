@@ -1,8 +1,9 @@
 import Vue from "vue";
 import Router from "vue-router";
-import MainPage from "./components/MainPage.vue";
-import AboutPage from "./components/AboutPage.vue";
-import ResultsPage from "./components/ResultsPage.vue";
+import MainPage from "./pages/MainPage.vue";
+import AboutPage from "./pages/AboutPage.vue";
+import ResultsPage from "./pages/ResultsPage.vue";
+import ResultDetailsPage from "./pages/ResultDetailsPage.vue";
 
 Vue.use(Router);
 
@@ -22,6 +23,12 @@ export default new Router({
       path: "/results",
       name: "Results",
       component: ResultsPage,
+    },
+    {
+      path: "/results/:id",
+      name: "ResultDetails",
+      component: ResultDetailsPage,
+      props: true,
     },
   ],
   mode: "history",

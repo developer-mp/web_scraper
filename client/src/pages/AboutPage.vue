@@ -60,8 +60,8 @@
 </style>
 
 <script>
-import FooterElement from "./FooterElement.vue";
-import NavBarElement from "./NavBarElement.vue";
+import FooterElement from "./../components/FooterComponent.vue";
+import NavBarElement from "./../components/NavBarComponent.vue";
 
 export default {
   components: {
