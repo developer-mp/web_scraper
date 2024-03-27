@@ -11,9 +11,29 @@ e Copy code
           :items="items"
           :fields="fields"
           @row-clicked="clickRow"
+          class="results-column"
         >
+          <template v-slot:cell(attachments)="">
+            <div class="attachment-icons">
+              <i class="fa-solid fa-file" v-b-tooltip title="Original"></i>
+              <i class="fa-solid fa-list" v-b-tooltip title="Summary"></i>
+              <i
+                class="fa-solid fa-chart-simple"
+                v-b-tooltip
+                title="Analysis"
+              ></i>
+              <i
+                class="fa-solid fa-language"
+                v-b-tooltip
+                title="Translation"
+              ></i>
+            </div>
+          </template>
           <template v-slot:cell(actions)="data">
-            <b-button @click="handleButtonClick(data.item)" variant="danger"
+            <b-button
+              @click="handleButtonClick(data.item)"
+              variant="danger"
+              size="sm"
               >Delete</b-button
             >
           </template>
@@ -36,6 +56,18 @@ e Copy code
   margin-top: 1em;
   margin-bottom: 1em;
 }
+
+.results-column {
+  width: 12em;
+}
+
+.results-column tbody tr:hover {
+  cursor: pointer;
+}
+
+.attachment-icons i:not(:last-child) {
+  margin-right: 1em;
+}
 </style>
 
 <script>
@@ -55,10 +87,9 @@ export default {
       items: [],
       fields: [
         { key: "id", label: "Id" },
-        { key: "text", label: "Text", formatter: "truncateText" },
-        { key: "link", label: "Link", formatter: "truncateLink" },
-        { key: "keywords", label: "Keywords" },
-        { key: "date", label: "Date" },
+        { key: "resultName", label: "Result Name", thClass: "results-column" },
+        { key: "date", label: "Date", thClass: "results-column" },
+        { key: "attachments", label: "Attachments" },
         { key: "actions", label: "Actions" },
       ],
     };
@@ -73,6 +104,7 @@ export default {
         this.items = response.data.map((item, index) => ({
           id: index + 1,
           text: parseText(item.text),
+          resultName: item.result_name,
           link: item.link,
           keywords: item.keywords,
           date: formatDate(item.timestamp),
@@ -82,8 +114,6 @@ export default {
       }
     },
     clickRow(item) {
-      // const url = `/results/${item.id}`;
-      // this.$router.push(url);
       this.$router.push({ name: "ResultDetails", params: { id: item.id } });
     },
     deleteItem(item) {
@@ -91,18 +121,6 @@ export default {
       if (index !== -1) {
         this.items.splice(index, 1);
       }
-    },
-    truncateText(value) {
-      if (value && value.length > 50) {
-        return value.substring(0, 50) + "...";
-      }
-      return value;
-    },
-    truncateLink(value) {
-      if (value && value.length > 30) {
-        return value.substring(0, 30) + "...";
-      }
-      return value;
     },
   },
 };
