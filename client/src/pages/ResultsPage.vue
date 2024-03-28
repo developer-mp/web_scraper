@@ -31,7 +31,7 @@ e Copy code
           </template>
           <template v-slot:cell(actions)="data">
             <b-button
-              @click="handleButtonClick(data.item)"
+              @click="deleteResult(data.item)"
               variant="danger"
               size="sm"
               >Delete</b-button
@@ -101,7 +101,8 @@ export default {
     async fetchResults() {
       try {
         const response = await axios.get("http://localhost:8080/api/results");
-        this.items = response.data.map((item, index) => ({
+        this.items = response.data?.map((item, index) => ({
+          resultId: item.result_id,
           id: index + 1,
           text: parseText(item.text),
           resultName: item.result_name,
@@ -116,10 +117,14 @@ export default {
     clickRow(item) {
       this.$router.push({ name: "ResultDetails", params: { id: item.id } });
     },
-    deleteItem(item) {
-      const index = this.items.indexOf(item);
-      if (index !== -1) {
-        this.items.splice(index, 1);
+    async deleteResult(item) {
+      try {
+        await axios.delete(
+          `http://localhost:8080/api/results/${item.resultId}`
+        );
+        window.location.reload();
+      } catch (error) {
+        console.error("Error deleting result:", error);
       }
     },
   },

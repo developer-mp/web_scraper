@@ -23,7 +23,7 @@ type ResultItem struct {
     Timestamp string   `json:"timestamp"`
 }
 
-func SaveScrapingResults(link string, keywords []string, resultName string, sentences []string) error {
+func SaveResults(link string, keywords []string, resultName string, sentences []string) error {
     AWSConfig, err := config.ReadAppConfig("appconfig.json")
     if err != nil {
         return err
@@ -69,7 +69,7 @@ func SaveScrapingResults(link string, keywords []string, resultName string, sent
     return nil
 }
 
-func GetScrapingResults() ([]ResultItem, error) {
+func GetResults() ([]ResultItem, error) {
 	AWSConfig, err := config.ReadAppConfig("appconfig.json")
 	if err != nil {
 		return nil, err
@@ -106,4 +106,38 @@ func GetScrapingResults() ([]ResultItem, error) {
 	}
 
 	return items, nil
+}
+
+func DeleteResult(resultID string) error {
+    AWSConfig, err := config.ReadAppConfig("appconfig.json")
+    if err != nil {
+        return err
+    }
+
+    sess := session.Must(session.NewSession(&aws.Config{
+        Region: aws.String(AWSConfig.AWS.AWSRegion),
+        Credentials: credentials.NewStaticCredentials(
+            AWSConfig.AWS.AWSAccessKeyID,
+            AWSConfig.AWS.AWSSecretAccessKey,
+            "",
+        ),
+    }))
+
+    svc := dynamodb.New(sess)
+
+    input := &dynamodb.DeleteItemInput{
+        TableName: aws.String("results"),
+        Key: map[string]*dynamodb.AttributeValue{
+            "result_id": {
+                S: aws.String(resultID),
+            },
+        },
+    }
+
+    _, err = svc.DeleteItem(input)
+    if err != nil {
+        return err
+    }
+
+    return nil
 }

@@ -32,12 +32,6 @@ func DisplayScrapingResults(c *gin.Context) {
 		return
 	}
 
-	// err = dynamodb.SaveScrapingResults(sentences, form.Keywords, form.URL)
-    // if err != nil {
-    //     c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-    //     return
-    // }
-
 	c.JSON(http.StatusOK, gin.H{"success": sentences})
 }
 
@@ -81,7 +75,7 @@ func SaveScrapingResults(c *gin.Context) {
         return
     }
 
-    err := dynamodb.SaveScrapingResults(requestData.URL, requestData.Keywords, requestData.ResultName, requestData.Sentences)
+    err := dynamodb.SaveResults(requestData.URL, requestData.Keywords, requestData.ResultName, requestData.Sentences)
     if err != nil {
         c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
         return
@@ -91,11 +85,23 @@ func SaveScrapingResults(c *gin.Context) {
 }
 
 func GetScrapingResults(c *gin.Context) {
-	results, err := dynamodb.GetScrapingResults()
+	results, err := dynamodb.GetResults()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
 	c.JSON(http.StatusOK, results)
+}
+
+func DeleteScrapingResult(c *gin.Context) {
+	id := c.Param("id")
+
+	err := dynamodb.DeleteResult(id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete result"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Result deleted successfully"})
 }
