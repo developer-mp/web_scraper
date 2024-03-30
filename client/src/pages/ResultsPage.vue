@@ -39,8 +39,8 @@ e Copy code
           </template>
         </b-table>
       </div>
-      <FooterComponent />
     </div>
+    <FooterComponent />
   </div>
 </template>
 

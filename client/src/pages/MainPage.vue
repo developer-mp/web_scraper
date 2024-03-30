@@ -102,8 +102,8 @@
           </div>
         </b-form>
       </b-modal>
-      <FooterComponent />
     </div>
+    <FooterComponent />
   </div>
 </template>
 

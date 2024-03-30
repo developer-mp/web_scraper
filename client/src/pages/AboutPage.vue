@@ -31,8 +31,8 @@
           </li>
         </ul>
       </div>
-      <FooterComponent />
     </div>
+    <FooterComponent />
   </div>
 </template>
 
