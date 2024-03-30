@@ -14,6 +14,7 @@ func main() {
 	router.Use(cors.New(cors.Config{
     AllowOrigins:     []string{"http://localhost:8081"},
     AllowMethods:     []string{"GET", "POST", "DELETE", "OPTIONS"},
+	AllowHeaders:     []string{"Content-Type"},
   }))
 
 	router.POST("api/scrape", scrape.DisplayScrapingResults)

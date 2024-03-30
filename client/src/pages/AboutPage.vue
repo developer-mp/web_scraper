@@ -1,6 +1,6 @@
 <template>
   <div>
-    <NavBarElement />
+    <NavBarComponent />
     <div class="container-about">
       <h2 class="about-header">About Application</h2>
       <div class="about-text">
@@ -31,7 +31,7 @@
           </li>
         </ul>
       </div>
-      <FooterElement />
+      <FooterComponent />
     </div>
   </div>
 </template>
@@ -60,13 +60,13 @@
 </style>
 
 <script>
-import FooterElement from "./../components/FooterComponent.vue";
-import NavBarElement from "./../components/NavBarComponent.vue";
+import FooterComponent from "./../components/FooterComponent.vue";
+import NavBarComponent from "./../components/NavBarComponent.vue";
 
 export default {
   components: {
-    FooterElement,
-    NavBarElement,
+    FooterComponent,
+    NavBarComponent,
   },
 };
 </script>

@@ -1,7 +1,7 @@
 e Copy code
 <template>
   <div>
-    <NavBarElement />
+    <NavBarComponent />
     <div class="container-results">
       <h2 class="results-header">Scraping Results</h2>
       <div>
@@ -39,7 +39,7 @@ e Copy code
           </template>
         </b-table>
       </div>
-      <FooterElement />
+      <FooterComponent />
     </div>
   </div>
 </template>
@@ -72,15 +72,15 @@ e Copy code
 
 <script>
 import axios from "axios";
-import FooterElement from "./../components/FooterComponent.vue";
-import NavBarElement from "./../components/NavBarComponent.vue";
+import FooterComponent from "./../components/FooterComponent.vue";
+import NavBarComponent from "./../components/NavBarComponent.vue";
 import { parseText } from "./../utils/parseText.js";
 import { formatDate } from "./../utils/formatDate.js";
 
 export default {
   components: {
-    FooterElement,
-    NavBarElement,
+    FooterComponent,
+    NavBarComponent,
   },
   data() {
     return {
@@ -115,7 +115,17 @@ export default {
       }
     },
     clickRow(item) {
-      this.$router.push({ name: "ResultDetails", params: { id: item.id } });
+      this.$router.push({
+        name: "ResultDetails",
+        params: {
+          id: item.id,
+          resultName: item.resultName,
+          link: item.link,
+          text: item.text,
+          keywords: item.keywords,
+          date: item.date,
+        },
+      });
     },
     async deleteResult(item) {
       try {

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <NavBarElement />
+    <NavBarComponent />
     <div class="container-main">
       <h2 class="main-header">Web Scraper</h2>
       <div class="form-wrapper">
@@ -102,7 +102,7 @@
           </div>
         </b-form>
       </b-modal>
-      <FooterElement />
+      <FooterComponent />
     </div>
   </div>
 </template>
@@ -151,14 +151,14 @@
 
 <script>
 import axios from "axios";
-import FooterElement from "./../components/FooterComponent.vue";
-import NavBarElement from "./../components/NavBarComponent.vue";
+import FooterComponent from "./../components/FooterComponent.vue";
+import NavBarComponent from "./../components/NavBarComponent.vue";
 import router from "./../router";
 
 export default {
   components: {
-    FooterElement,
-    NavBarElement,
+    FooterComponent,
+    NavBarComponent,
   },
   data() {
     return {
