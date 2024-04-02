@@ -41,6 +41,7 @@
 </style>
 
 <script>
+import { mapGetters, mapActions } from "vuex";
 import FooterComponent from "./../components/FooterComponent.vue";
 import NavBarComponent from "./../components/NavBarComponent.vue";
 import { cutString } from "./../utils/cutString.js";
@@ -50,51 +51,39 @@ export default {
     FooterComponent,
     NavBarComponent,
   },
-  props: {
-    id: {
-      type: Number,
-      required: true,
-    },
-    resultName: {
-      type: String,
-      required: true,
-    },
-    link: {
-      type: String,
-      required: true,
-    },
-    text: {
-      type: String,
-      required: true,
-    },
-    keywords: {
-      type: Array,
-      required: true,
-    },
-    date: {
-      type: String,
-      required: true,
+  computed: {
+    ...mapGetters(["getResults"]),
+    result() {
+      const results = this.getResults;
+      const result = results.find(
+        (result) => result.id === parseInt(this.$route.params.id)
+      );
+      if (result) {
+        return {
+          id: result.id,
+          resultName: result.resultName,
+          link: result.link,
+          text: cutString(result.text),
+          keywords: result.keywords,
+          date: result.date,
+        };
+      } else {
+        return {
+          id: null,
+          resultName: null,
+          link: null,
+          text: null,
+          keywords: null,
+          date: null,
+        };
+      }
     },
   },
-  data() {
-    return {
-      result: {
-        id: null,
-        resultName: null,
-        link: null,
-        text: null,
-        keywords: null,
-        date: null,
-      },
-    };
+  methods: {
+    ...mapActions(["fetchResults"]),
   },
   created() {
-    this.result.id = this.id;
-    this.result.resultName = this.resultName;
-    this.result.link = this.link;
-    this.result.text = cutString(this.text);
-    this.result.keywords = this.keywords;
-    this.result.date = this.date;
+    this.fetchResults();
   },
 };
 </script>

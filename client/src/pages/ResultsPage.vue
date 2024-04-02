@@ -97,17 +97,19 @@ export default {
     };
   },
   methods: {
-    ...mapActions(["fetchResults", "deleteResult"]),
+    ...mapActions(["fetchResults"]),
+    async deleteResult(item) {
+      try {
+        await this.$store.dispatch("deleteResult", item.resultId);
+      } catch (error) {
+        console.error("Error clicking Delete button:", error);
+      }
+    },
     clickRow(item) {
       this.$router.push({
         name: "ResultDetails",
         params: {
           id: item.id,
-          resultName: item.resultName,
-          link: item.link,
-          text: item.text,
-          keywords: item.keywords,
-          date: item.date,
         },
       });
     },
