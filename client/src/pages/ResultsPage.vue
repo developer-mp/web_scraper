@@ -1,4 +1,3 @@
-e Copy code
 <template>
   <div>
     <NavBarComponent />
@@ -8,7 +7,7 @@ e Copy code
         <b-table
           striped
           hover
-          :items="items"
+          :items="results"
           :fields="fields"
           @row-clicked="clickRow"
           class="results-column"
@@ -71,20 +70,23 @@ e Copy code
 </style>
 
 <script>
-import axios from "axios";
+import { mapGetters, mapActions } from "vuex";
 import FooterComponent from "./../components/FooterComponent.vue";
 import NavBarComponent from "./../components/NavBarComponent.vue";
-import { parseText } from "./../utils/parseText.js";
-import { formatDate } from "./../utils/formatDate.js";
 
 export default {
   components: {
     FooterComponent,
     NavBarComponent,
   },
+  computed: {
+    ...mapGetters(["getResults"]),
+    results() {
+      return this.getResults;
+    },
+  },
   data() {
     return {
-      items: [],
       fields: [
         { key: "id", label: "Id" },
         { key: "resultName", label: "Result Name", thClass: "results-column" },
@@ -94,26 +96,8 @@ export default {
       ],
     };
   },
-  mounted() {
-    this.fetchResults();
-  },
   methods: {
-    async fetchResults() {
-      try {
-        const response = await axios.get("http://localhost:8080/api/results");
-        this.items = response.data?.map((item, index) => ({
-          resultId: item.result_id,
-          id: index + 1,
-          text: parseText(item.text),
-          resultName: item.result_name,
-          link: item.link,
-          keywords: item.keywords,
-          date: formatDate(item.timestamp),
-        }));
-      } catch (error) {
-        console.error("Error fetching results:", error);
-      }
-    },
+    ...mapActions(["fetchResults", "deleteResult"]),
     clickRow(item) {
       this.$router.push({
         name: "ResultDetails",
@@ -127,16 +111,9 @@ export default {
         },
       });
     },
-    async deleteResult(item) {
-      try {
-        await axios.delete(
-          `http://localhost:8080/api/results/${item.resultId}`
-        );
-        window.location.reload();
-      } catch (error) {
-        console.error("Error deleting result:", error);
-      }
-    },
+  },
+  created() {
+    this.fetchResults();
   },
 };
 </script>
