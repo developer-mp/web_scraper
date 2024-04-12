@@ -2,10 +2,8 @@ package dynamodb
 
 import (
 	"strings"
-	"time"
 
 	config "server/internal"
-	hash "server/utils"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
@@ -23,7 +21,7 @@ type ResultItem struct {
     Timestamp string   `json:"timestamp"`
 }
 
-func SaveResults(link string, keywords []string, resultName string, sentences []string) error {
+func SaveResults(link string, keywords []string, resultName string, sentences []string, resultID, timestamp string) error {
     AWSConfig, err := config.ReadAppConfig("appconfig.json")
     if err != nil {
         return err
@@ -40,9 +38,9 @@ func SaveResults(link string, keywords []string, resultName string, sentences []
 
     svc := dynamodb.New(sess)
 
-    resultID := hash.GenerateHashID()
+    //resultID := hash.GenerateHashID()
 	searchText := strings.Join(sentences, " ")
-    currentTime := time.Now().Format(time.RFC3339)
+    //currentTime := time.Now().Format(time.RFC3339)
 
     item := ResultItem{
         ResultID: resultID,
@@ -50,7 +48,7 @@ func SaveResults(link string, keywords []string, resultName string, sentences []
         Text:     []string{searchText},
         Keywords: keywords,
         Link:     link,
-        Timestamp: currentTime,
+        Timestamp: timestamp,
     }
 
     itemBytes, err := dynamodbattribute.MarshalMap(item)

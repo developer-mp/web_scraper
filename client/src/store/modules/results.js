@@ -1,7 +1,6 @@
 import axios from "axios";
 import { parseText } from "./../../utils/parseText";
 import { formatDate } from "./../../utils/formatDate.js";
-import createPersistedState from "vuex-persistedstate";
 
 const resultsModule = {
   state: {
@@ -51,7 +50,6 @@ const resultsModule = {
       return state.results;
     },
   },
-  plugins: [createPersistedState()],
 };
 
 export default resultsModule;

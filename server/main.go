@@ -7,9 +7,19 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/redis/go-redis/v9"
 )
 
 func main() {
+	redisClient := redis.NewClient(&redis.Options{
+    Addr:     "localhost:6379",
+    Password: "",
+    DB:       0,
+    })
+    defer redisClient.Close()
+
+	scrape.InitializeRedisClient(redisClient)
+
 	router := gin.Default()
 	router.Use(cors.New(cors.Config{
     AllowOrigins:     []string{"http://localhost:8081"},

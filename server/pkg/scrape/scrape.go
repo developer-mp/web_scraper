@@ -1,14 +1,27 @@
 package scrape
 
 import (
+	"context"
+	"encoding/json"
+	"log"
 	"net/http"
 	"strings"
+	"time"
 
 	dynamodb "server/pkg/db"
+	hash "server/utils"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/gin-gonic/gin"
+	"github.com/redis/go-redis/v9"
 )
+
+var redisClient *redis.Client
+
+func InitializeRedisClient(client *redis.Client) {
+    redisClient = client
+}
+
 
 func DisplayScrapingResults(c *gin.Context) {
 	var form struct {
@@ -63,6 +76,11 @@ func ScrapeWebpage(url string, keywords []string) ([]string, error) {
 }
 
 func SaveScrapingResults(c *gin.Context) {
+	if redisClient == nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Redis client is not initialized"})
+        return
+    }
+
     var requestData struct {
         URL        string   `json:"url"`
         Keywords   []string `json:"keywords"`
@@ -75,7 +93,15 @@ func SaveScrapingResults(c *gin.Context) {
         return
     }
 
-    err := dynamodb.SaveResults(requestData.URL, requestData.Keywords, requestData.ResultName, requestData.Sentences)
+	resultID := hash.GenerateHashID()
+    currentTime := time.Now().Format(time.RFC3339)
+
+    if err := SaveToRedis(requestData.URL, requestData.Keywords, requestData.ResultName, requestData.Sentences, resultID, currentTime); err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save result to Redis"})
+        return
+    }
+
+    err := dynamodb.SaveResults(requestData.URL, requestData.Keywords, requestData.ResultName, requestData.Sentences, resultID, currentTime)
     if err != nil {
         c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
         return
@@ -104,4 +130,28 @@ func DeleteScrapingResult(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "Result deleted successfully"})
+}
+
+func SaveToRedis(url string, keywords []string, resultName string, sentences []string, resultID, timestamp string) error {
+    data := map[string]interface{}{
+        "url":       url,
+        "keywords":  keywords,
+        "resultName": resultName,
+        "sentences": sentences,
+		"resultID": resultID,
+        "timestamp": timestamp,
+    }
+
+    jsonData, err := json.Marshal(data)
+    if err != nil {
+        return err
+    }
+
+    key := resultName
+    _, err = redisClient.Set(context.Background(), key, jsonData, 0).Result()
+    if err != nil {
+    	log.Printf("Failed to save to Redis: %v", err)
+    	return err
+	}
+	return nil
 }
