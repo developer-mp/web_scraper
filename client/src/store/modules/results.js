@@ -20,15 +20,22 @@ const resultsModule = {
     async fetchResults({ commit }) {
       try {
         const response = await axios.get("http://localhost:8080/api/results");
-        const results = response.data.map((item, index) => ({
-          resultId: item.result_id,
-          id: index + 1,
-          text: parseText(item.text),
-          resultName: item.result_name,
-          link: item.link,
-          keywords: item.keywords,
-          date: formatDate(item.timestamp),
-        }));
+        if (!response.data || response.data.length === 0) {
+          console.log("No data received or data is empty");
+          commit("setResults", []);
+          return;
+        }
+        const results = Array.isArray(response.data)
+          ? response.data.map((item, index) => ({
+              resultId: item.result_id,
+              id: index + 1,
+              text: item.text ? parseText(item.text) : "",
+              resultName: item.result_name,
+              link: item.link,
+              keywords: item.keywords,
+              date: item.timestamp ? formatDate(item.timestamp) : "",
+            }))
+          : [];
         commit("setResults", results);
       } catch (error) {
         console.error("Error fetching results:", error);

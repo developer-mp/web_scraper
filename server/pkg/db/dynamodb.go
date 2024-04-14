@@ -38,9 +38,7 @@ func SaveResults(link string, keywords []string, resultName string, sentences []
 
     svc := dynamodb.New(sess)
 
-    //resultID := hash.GenerateHashID()
 	searchText := strings.Join(sentences, " ")
-    //currentTime := time.Now().Format(time.RFC3339)
 
     item := ResultItem{
         ResultID: resultID,
