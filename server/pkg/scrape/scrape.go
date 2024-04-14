@@ -145,6 +145,11 @@ func DeleteScrapingResult(c *gin.Context) {
 		return
 	}
 
+	if err := deleteResultFromRedis(id); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete result from Redis: " + err.Error()})
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{"message": "Result deleted successfully"})
 }
 
@@ -197,4 +202,12 @@ func getResultsFromRedis() (interface{}, error) {
     }
 
     return results, nil
+}
+
+func deleteResultFromRedis(resultID string) error {
+	_, err := redisClient.Del(context.Background(), resultID).Result()
+	if err != nil {
+		return err
+	}
+	return nil
 }
