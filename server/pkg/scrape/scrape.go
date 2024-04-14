@@ -29,18 +29,18 @@ func DisplayScrapingResults(c *gin.Context) {
 	}
 
 	if err := c.Bind(&form); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request data: " + err.Error()})
 		return
 	}
 
 	sentences, err := ScrapeWebpage(form.URL, form.Keywords)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate scraping results: " + err.Error()})
 		return
 	}
 
 	if len(sentences) == 0 {
-		c.JSON(http.StatusOK, gin.H{"message": "No sentences found for the given keywords."})
+		c.JSON(http.StatusOK, gin.H{"message": "No sentences found for the given keywords"})
 		return
 	}
 
@@ -50,13 +50,13 @@ func DisplayScrapingResults(c *gin.Context) {
 func ScrapeWebpage(url string, keywords []string) ([]string, error) {
 	var sentences []string
 
-	resp, err := http.Get(url)
+	response, err := http.Get(url)
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
+	defer response.Body.Close()
 
-	doc, err := goquery.NewDocumentFromReader(resp.Body)
+	doc, err := goquery.NewDocumentFromReader(response.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -88,21 +88,21 @@ func SaveScrapingResults(c *gin.Context) {
     }
 
     if err := c.BindJSON(&requestData); err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+        c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request data: " + err.Error()})
         return
     }
 
-	resultID := hash.GenerateHashID()
+	resultId := hash.GenerateHashId()
     currentTime := time.Now().Format(time.RFC3339)
 
-    if err := SaveResultToRedis(requestData.URL, requestData.Keywords, requestData.ResultName, requestData.Sentences, resultID, currentTime); err != nil {
-        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save result to Redis"})
+    if err := SaveResultsToRedis(requestData.URL, requestData.Keywords, requestData.ResultName, requestData.Sentences, resultId, currentTime); err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save results to Redis: " + err.Error()})
         return
     }
 
-    err := dynamodb.SaveResults(requestData.URL, requestData.Keywords, requestData.ResultName, requestData.Sentences, resultID, currentTime)
+    err := dynamodb.SaveResults(requestData.URL, requestData.Keywords, requestData.ResultName, requestData.Sentences, resultId, currentTime)
     if err != nil {
-        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save results to database: " + err.Error()})
         return
     }
 
@@ -112,8 +112,7 @@ func SaveScrapingResults(c *gin.Context) {
 func GetScrapingResults(c *gin.Context) {
     cachedResults, err := getResultsFromRedis()
     if err != nil {
-        log.Printf("Error retrieving results from Redis: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve results from Redis"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve results from Redis: " + err.Error()})
         return
     }
 
@@ -124,24 +123,23 @@ func GetScrapingResults(c *gin.Context) {
 	
 	results, err := dynamodb.GetResults()
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve results from database: " + err.Error()})
 		return
 	}
 
-	if results == nil {
-        c.JSON(http.StatusNotFound, gin.H{"error": "Results not found"})
-        return
-    }
+	if len(results) == 0 {
+		c.JSON(http.StatusOK, gin.H{"message": "No results found"})
+		return
+	}
 
 	c.JSON(http.StatusOK, results)
 }
 
-func DeleteScrapingResult(c *gin.Context) {
+func DeleteScrapingResults(c *gin.Context) {
 	id := c.Param("id")
 
-	err := dynamodb.DeleteResult(id)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete result"})
+	if err := dynamodb.DeleteResult(id); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete result from database: " + err.Error()})
 		return
 	}
 
@@ -153,11 +151,13 @@ func DeleteScrapingResult(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Result deleted successfully"})
 }
 
-func SaveResultToRedis(url string, keywords []string, resultName string, sentences []string, resultID, timestamp string) error {
-    data := map[string]interface{}{
+func SaveResultsToRedis(url string, keywords []string, resultName string, sentences []string, resultID, timestamp string) error {
+    combinedText := strings.Join(sentences, " ")
+	
+	data := map[string]interface{}{
 		"result_id": resultID,
 		"result_name": resultName,
-		"text": sentences,
+		"text": combinedText,
 		"keywords": keywords,
         "link": url,      
         "timestamp": timestamp,

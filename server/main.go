@@ -30,6 +30,6 @@ func main() {
 	router.POST("api/scrape", scrape.DisplayScrapingResults)
 	router.POST("api/results", scrape.SaveScrapingResults)
 	router.GET("api/results", scrape.GetScrapingResults)
-	router.DELETE("api/results/:id", scrape.DeleteScrapingResult)
+	router.DELETE("api/results/:id", scrape.DeleteScrapingResults)
 	log.Fatal(router.Run(":8080"))
 }

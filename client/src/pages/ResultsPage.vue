@@ -3,7 +3,7 @@
     <NavBarComponent />
     <div class="container-results">
       <h2 class="results-header">Scraping Results</h2>
-      <div>
+      <div v-if="results && results.length > 0">
         <b-table
           striped
           hover
@@ -38,6 +38,9 @@
           </template>
         </b-table>
       </div>
+      <div v-else class="no-results">
+        <p>No results to display</p>
+      </div>
     </div>
     <FooterComponent />
   </div>
@@ -66,6 +69,11 @@
 
 .attachment-icons i:not(:last-child) {
   margin-right: 1em;
+}
+
+.no-results {
+  text-align: center;
+  margin-top: 20px;
 }
 </style>
 

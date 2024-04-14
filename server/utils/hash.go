@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func GenerateHashID() string {
+func GenerateHashId() string {
     timestamp := time.Now().UnixNano() / int64(time.Millisecond)
 
 	randomBytes := make([]byte, 8)
