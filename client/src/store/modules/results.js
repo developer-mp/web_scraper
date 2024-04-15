@@ -1,4 +1,5 @@
 import axios from "axios";
+import { formatDate } from "./../../utils/formatDate";
 
 const resultsModule = {
   state: {
@@ -30,7 +31,7 @@ const resultsModule = {
               resultName: item.result_name,
               link: item.link,
               keywords: item.keywords,
-              date: item.timestamp,
+              date: formatDate(item.timestamp),
             }))
           : [];
         commit("setResults", results);

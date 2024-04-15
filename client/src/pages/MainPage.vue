@@ -183,7 +183,7 @@ export default {
           url: this.url,
           keywords: this.keywords,
         });
-        this.sentences = response.data.success;
+        this.sentences = response.data;
         this.showPreviewModal = true;
       } catch (error) {
         console.error("Error:", error);

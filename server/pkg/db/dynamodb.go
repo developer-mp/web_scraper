@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	config "server/internal"
+	"server/pkg/models"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
@@ -40,7 +41,7 @@ func SaveResults(link string, keywords []string, resultName string, sentences []
 
 	searchText := strings.Join(sentences, " ")
 
-    item := ResultItem{
+    item := models.ResultItem{
         ResultID: resultID,
 		ResultName: resultName,
         Text:     []string{searchText},

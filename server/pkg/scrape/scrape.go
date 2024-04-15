@@ -44,7 +44,7 @@ func DisplayScrapingResults(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"success": sentences})
+	c.JSON(http.StatusOK, sentences)
 }
 
 func ScrapeWebpage(url string, keywords []string) ([]string, error) {
