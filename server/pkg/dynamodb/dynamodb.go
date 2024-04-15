@@ -105,7 +105,7 @@ func GetResults() ([]ResultItem, error) {
 	return items, nil
 }
 
-func DeleteResult(resultID string) error {
+func DeleteResult(resultId string) error {
     AWSConfig, err := config.ReadAppConfig("appconfig.json")
     if err != nil {
         return err
@@ -126,7 +126,7 @@ func DeleteResult(resultID string) error {
         TableName: aws.String("results"),
         Key: map[string]*dynamodb.AttributeValue{
             "result_id": {
-                S: aws.String(resultID),
+                S: aws.String(resultId),
             },
         },
     }

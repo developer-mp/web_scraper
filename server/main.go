@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 
+	"server/pkg/redisdb"
 	"server/pkg/scrape"
 
 	"github.com/gin-contrib/cors"
@@ -18,7 +19,7 @@ func main() {
     })
     defer redisClient.Close()
 
-	scrape.InitializeRedisClient(redisClient)
+	redisdb.InitializeClient(redisClient)
 
 	router := gin.Default()
 	router.Use(cors.New(cors.Config{
