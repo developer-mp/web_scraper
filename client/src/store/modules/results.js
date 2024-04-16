@@ -24,15 +24,19 @@ const resultsModule = {
           return;
         }
         const results = Array.isArray(response.data)
-          ? response.data.map((item, index) => ({
-              resultId: item.result_id,
-              id: index + 1,
-              text: item.text,
-              resultName: item.result_name,
-              link: item.link,
-              keywords: item.keywords,
-              date: formatDate(item.timestamp),
-            }))
+          ? response.data
+              .sort((a, b) => {
+                return new Date(a.timestamp) - new Date(b.timestamp);
+              })
+              .map((item, index) => ({
+                resultId: item.result_id,
+                id: index + 1,
+                text: item.text,
+                resultName: item.result_name,
+                link: item.link,
+                keywords: item.keywords,
+                date: formatDate(item.timestamp),
+              }))
           : [];
         commit("setResults", results);
       } catch (error) {
