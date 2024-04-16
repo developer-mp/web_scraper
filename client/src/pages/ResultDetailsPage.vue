@@ -10,12 +10,8 @@
               <b-dropdown-item @click="summarizeText"
                 >Summarization</b-dropdown-item
               >
-              <b-dropdown-item @click="analyzeSentiment"
-                >Sentiment Analysis</b-dropdown-item
-              >
-              <b-dropdown-item @click="translateText"
-                >Translation</b-dropdown-item
-              >
+              <b-dropdown-item>Sentiment Analysis</b-dropdown-item>
+              <b-dropdown-item>Translation</b-dropdown-item>
             </b-dropdown>
           </b-button-group>
         </li>
@@ -105,7 +101,7 @@ export default {
       const apiKey = process.env.VUE_APP_GEMINI_API_KEY;
       try {
         const response = await generateContent(apiKey, this.result.text);
-        this.summarizedText = response.data;
+        this.summarizedText = response.data.candidates[0].content.parts[0].text;
         console.log(this.summarizedText);
       } catch (error) {
         console.error("Error generating content:", error);

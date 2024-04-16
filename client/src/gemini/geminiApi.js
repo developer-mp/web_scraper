@@ -1,28 +1,26 @@
 import axios from "axios";
 
 const geminiApi = axios.create({
-  baseURL: "https://generativelanguage.googleapis.com/v1beta",
+  baseURL: process.env.VUE_APP_GEMINI_BASE_URL,
   headers: {
     "Content-Type": "application/json",
   },
 });
 
 export function generateContent(apiKey, text) {
+  const apiEndpoint = process.env.VUE_APP_GEMINI_API_ENDPOINT;
   const data = {
     contents: [
       {
         parts: [
           {
-            text: text,
+            text: `Summarize the following text: ${text}`,
           },
         ],
       },
     ],
   };
-  return geminiApi.post(
-    `/models/gemini-pro:generateContent?key=${apiKey}`,
-    data
-  );
+  return geminiApi.post(`${apiEndpoint}${apiKey}`, data);
 }
 
 export default geminiApi;
