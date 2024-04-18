@@ -1,5 +1,6 @@
 import axios from "axios";
 import { formatDate } from "./../../utils/formatDate";
+import { parseText } from "./../../utils/parseText";
 
 const resultsModule = {
   state: {
@@ -31,7 +32,7 @@ const resultsModule = {
               .map((item, index) => ({
                 resultId: item.result_id,
                 id: index + 1,
-                text: item.text,
+                text: parseText(item.text),
                 resultName: item.result_name,
                 link: item.link,
                 keywords: item.keywords,

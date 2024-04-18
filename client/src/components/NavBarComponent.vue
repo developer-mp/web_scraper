@@ -6,10 +6,6 @@
       <b-nav-item href="/results">Results</b-nav-item>
     </b-navbar-nav>
     <b-navbar-nav class="ml-auto">
-      <b-nav-item-dropdown text="EN" right>
-        <b-dropdown-item href="#">ES</b-dropdown-item>
-        <b-dropdown-item href="#">FR</b-dropdown-item>
-      </b-nav-item-dropdown>
       <b-nav-item-dropdown right>
         <template #button-content>User</template>
         <b-dropdown-item href="#">Profile</b-dropdown-item>
