@@ -19,7 +19,9 @@ const resultsModule = {
   actions: {
     async fetchResults({ commit }) {
       try {
-        const response = await axios.get("http://localhost:8080/api/results");
+        const response = await axios.get(
+          "http://localhost:8080/api/v1/results"
+        );
         if (!response.data || response.data.length === 0) {
           commit("setResults", []);
           return;
@@ -47,7 +49,7 @@ const resultsModule = {
     },
     async deleteResult({ commit }, resultId) {
       try {
-        await axios.delete(`http://localhost:8080/api/results/${resultId}`);
+        await axios.delete(`http://localhost:8080/api/v1/results/${resultId}`);
         commit("deleteResult", resultId);
       } catch (error) {
         console.error("Error deleting result: ", error);

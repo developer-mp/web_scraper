@@ -28,9 +28,13 @@ func main() {
 	AllowHeaders:     []string{"Content-Type"},
   }))
 
-	router.POST("api/scrape", scrape.DisplayScrapingResults)
-	router.POST("api/results", scrape.SaveScrapingResults)
-	router.GET("api/results", scrape.GetScrapingResults)
-	router.DELETE("api/results/:id", scrape.DeleteScrapingResults)
+	v1 := router.Group("/api/v1")
+	{
+		v1.POST("/scrape", scrape.DisplayScrapingResults)
+		v1.POST("/results", scrape.SaveScrapingResults)
+		v1.GET("/results", scrape.GetScrapingResults)
+		v1.DELETE("/results/:id", scrape.DeleteScrapingResults)
+	}
+	
 	log.Fatal(router.Run(":8080"))
 }

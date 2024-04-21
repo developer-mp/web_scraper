@@ -43,9 +43,15 @@
             v-if="showPreviewResults"
             style="text-align: justify; text-justify: auto"
           >
-            <p v-for="(sentence, index) in sentences" :key="index">
-              {{ sentence }}
-            </p>
+            <div v-if="Array.isArray(sentences) && sentences.length > 0">
+              <p
+                v-for="(sentence, index) in sentences.slice(0, 2)"
+                :key="index"
+              >
+                {{ sentence }}
+              </p>
+            </div>
+            <div v-else>No sentences found for the given keywords</div>
           </div>
         </div>
         <div class="button-container">
@@ -179,10 +185,13 @@ export default {
   methods: {
     async submitLink() {
       try {
-        const response = await axios.post("http://localhost:8080/api/scrape", {
-          url: this.url,
-          keywords: this.keywords,
-        });
+        const response = await axios.post(
+          "http://localhost:8080/api/v1/scrape",
+          {
+            url: this.url,
+            keywords: this.keywords.map((keyword) => keyword.toLowerCase()),
+          }
+        );
         this.sentences = response.data;
         this.showPreviewModal = true;
       } catch (error) {
@@ -208,7 +217,7 @@ export default {
     },
     async doneResults() {
       try {
-        await axios.post("http://localhost:8080/api/results", {
+        await axios.post("http://localhost:8080/api/v1/results", {
           url: this.url,
           keywords: this.keywords,
           resultName: this.resultName,

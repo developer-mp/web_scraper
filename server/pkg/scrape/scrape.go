@@ -30,11 +30,6 @@ func DisplayScrapingResults(c *gin.Context) {
 		return
 	}
 
-	if len(sentences) == 0 {
-		c.JSON(http.StatusOK, gin.H{"message": "No sentences found for the given keywords"})
-		return
-	}
-
 	c.JSON(http.StatusOK, sentences)
 }
 
