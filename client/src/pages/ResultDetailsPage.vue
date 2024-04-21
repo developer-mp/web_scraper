@@ -86,6 +86,22 @@
         >
       </div>
     </b-modal>
+    <ModalComponent
+      ref="summarizationModal"
+      :modalTitle="summarizedTextTitle"
+      :modalText="summarizedText"
+      :modalMessage="noSummarizedTextMessage"
+      @confirm="downloadSummary"
+      @cancel="cancelPreview"
+    />
+    <ModalComponent
+      ref="sentimentAnalysisModal"
+      :modalTitle="analyzedSentimentTextTitle"
+      :modalText="analyzedSentimentText"
+      :modalMessage="noAnalyzedSentimentTextMessage"
+      @confirm="downloadSentimentAnalysis"
+      @cancel="cancelPreview"
+    />
     <FooterComponent />
   </div>
 </template>
@@ -136,6 +152,12 @@
 .details-card-container * {
   padding: 0;
 }
+
+.button-container {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1em;
+}
 </style>
 
 <script>
@@ -143,16 +165,19 @@ import { mapGetters, mapActions } from "vuex";
 import FooterComponent from "./../components/FooterComponent.vue";
 import NavBarComponent from "./../components/NavBarComponent.vue";
 import { cutString } from "./../utils/cutString.js";
+import { downloadFile } from "./../utils/downloadFile.js";
 import {
   summarizeTextGemini,
   analyzeSentimentTextGemini,
   translateTextGemini,
 } from "./../gemini/geminiApi";
+import ModalComponent from "./../components/ModalComponent.vue";
 
 export default {
   components: {
     FooterComponent,
     NavBarComponent,
+    ModalComponent,
   },
   computed: {
     ...mapGetters(["getResults"]),
@@ -216,6 +241,7 @@ export default {
       try {
         const response = await summarizeTextGemini(apiKey, this.result.text);
         this.summarizedText = response.data.candidates[0].content.parts[0].text;
+        this.$refs.summarizationModal.showModal();
       } catch (error) {
         console.error("Error generating summary: ", error);
       }
@@ -229,7 +255,7 @@ export default {
         );
         this.analyzedSentimentText =
           response.data.candidates[0].content.parts[0].text;
-        console.log(this.analyzedSentimentText);
+        this.$refs.sentimentAnalysisModal.showModal();
       } catch (error) {
         console.error("Error generating sentiment analysis: ", error);
       }
@@ -243,6 +269,7 @@ export default {
           this.result.text
         );
         this.translatedText = response.data.candidates[0].content.parts[0].text;
+        this.showModal("Translated Text Preview", this.translatedText);
         this.$bvModal.hide("translationModal");
       } catch (error) {
         console.error("Error translating text: ", error);
@@ -251,11 +278,25 @@ export default {
     canceltranslationModal() {
       this.translationModal = false;
     },
+    downloadSummary() {
+      downloadFile("summary", this.summarizedText);
+    },
+    downloadSentimentAnalysis() {
+      downloadFile("sentiment", this.analyzedSentimentText);
+    },
+    cancelPreview() {
+      this.$refs.modalComponent.modalVisible = false;
+    },
   },
   data() {
     return {
-      summarizedText: null,
-      translatedText: null,
+      summarizedText: "",
+      summarizedTextTitle: "Summarized Text Preview",
+      noSummarizedTextMessage: "No summarized text is available",
+      analyzedSentimentText: "",
+      analyzedSentimentTextTitle: "Sentiment Analysis Preview",
+      noAnalyzedSentimentTextMessage: "No sentiment analysis is available",
+      // translatedText: null,
       language: "",
     };
   },
