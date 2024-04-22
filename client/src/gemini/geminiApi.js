@@ -30,7 +30,7 @@ export function analyzeSentimentTextGemini(apiKey, text) {
       {
         parts: [
           {
-            text: `Perform sentiment analysis of the text in the format 'Sentiment' and 'Explanation': ${text}`,
+            text: `Perform sentiment analysis of the text in the format Sentiment: [sentiment] and Explanation: [explanation]: ${text}`,
           },
         ],
       },

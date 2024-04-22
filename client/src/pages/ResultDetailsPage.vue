@@ -12,7 +12,7 @@
             <b-dropdown-item @click="analyzeSentimentText"
               >Sentiment Analysis</b-dropdown-item
             >
-            <b-dropdown-item @click="showTranslateModal"
+            <b-dropdown-item @click="showTranslationModal"
               >Translation</b-dropdown-item
             >
           </b-dropdown>
@@ -54,53 +54,43 @@
         <li><strong>Result Name:</strong> {{ result.resultName }}</li>
         <li><strong>Link:</strong> {{ result.link }}</li>
         <li><strong>Keywords:</strong> {{ result.keywords }}</li>
-        <li><strong>Text Sample:</strong> {{ result.text }}</li>
+        <li><strong>Text Sample:</strong> {{ result.textSample }}</li>
         <li><strong>Date:</strong> {{ result.date }}</li>
       </ul>
     </div>
-    <b-modal id="translationModal" title="Language Input" hide-footer>
-      <b-form @submit.prevent="translateText">
-        <label for="languageInput" style="margin-right: 1em"
-          >Enter Language:</label
-        >
-        <input
-          type="text"
-          v-model="language"
-          id="languageInput"
-          placeholder="e.g., French, Spanish"
-        />
-      </b-form>
-      <div class="button-container">
-        <b-button
-          type="submit"
-          variant="primary"
-          @click="translateText"
-          class="button mt-3"
-          >Done</b-button
-        >
-        <b-button
-          variant="secondary"
-          @click="canceltranslationModal"
-          class="button mt-3"
-          >Cancel</b-button
-        >
-      </div>
-    </b-modal>
-    <ModalComponent
+    <ModalWindowComponent
       ref="summarizationModal"
       :modalTitle="summarizedTextTitle"
       :modalText="summarizedText"
       :modalMessage="noSummarizedTextMessage"
       @confirm="downloadSummary"
-      @cancel="cancelPreview"
+      @cancel="cancelModal"
     />
-    <ModalComponent
+    <ModalWindowComponent
       ref="sentimentAnalysisModal"
       :modalTitle="analyzedSentimentTextTitle"
       :modalText="analyzedSentimentText"
       :modalMessage="noAnalyzedSentimentTextMessage"
       @confirm="downloadSentimentAnalysis"
-      @cancel="cancelPreview"
+      @cancel="cancelModal"
+    />
+    <ModalInputComponent
+      ref="translationInputModal"
+      :modalTitle="translatedTextInputTitle"
+      :inputLabel="translatedTextInputLabel"
+      :inputValue="language"
+      :inputPlaceholder="translatedTextInputPlaceholder"
+      @confirm="translateText"
+      @cancel="cancelModal"
+      @input="handleInputValue"
+    />
+    <ModalWindowComponent
+      ref="translationModal"
+      :modalTitle="translatedTextTitle"
+      :modalText="translatedText"
+      :modalMessage="noTranslatedTextMessage"
+      @confirm="downloadTranslation"
+      @cancel="cancelModal"
     />
     <FooterComponent />
   </div>
@@ -171,13 +161,15 @@ import {
   analyzeSentimentTextGemini,
   translateTextGemini,
 } from "./../gemini/geminiApi";
-import ModalComponent from "./../components/ModalComponent.vue";
+import ModalWindowComponent from "./../components/ModalWindowComponent.vue";
+import ModalInputComponent from "./../components/ModalInputComponent.vue";
 
 export default {
   components: {
     FooterComponent,
     NavBarComponent,
-    ModalComponent,
+    ModalWindowComponent,
+    ModalInputComponent,
   },
   computed: {
     ...mapGetters(["getResults"]),
@@ -191,7 +183,8 @@ export default {
           id: result.id,
           resultName: result.resultName,
           link: result.link,
-          text: cutString(result.text),
+          textSample: cutString(result.text),
+          text: result.text,
           keywords: result.keywords,
           date: result.date,
         };
@@ -233,8 +226,8 @@ export default {
         keywordCounts: keywordCounts,
       };
     },
-    showTranslateModal() {
-      this.$bvModal.show("translationModal");
+    showTranslationModal() {
+      this.$refs.translationInputModal.showModal();
     },
     async summarizeText() {
       const apiKey = process.env.VUE_APP_GEMINI_API_KEY;
@@ -269,14 +262,10 @@ export default {
           this.result.text
         );
         this.translatedText = response.data.candidates[0].content.parts[0].text;
-        this.showModal("Translated Text Preview", this.translatedText);
-        this.$bvModal.hide("translationModal");
+        this.$refs.translationModal.showModal();
       } catch (error) {
         console.error("Error translating text: ", error);
       }
-    },
-    canceltranslationModal() {
-      this.translationModal = false;
     },
     downloadSummary() {
       downloadFile("summary", this.summarizedText);
@@ -284,8 +273,19 @@ export default {
     downloadSentimentAnalysis() {
       downloadFile("sentiment", this.analyzedSentimentText);
     },
-    cancelPreview() {
-      this.$refs.modalComponent.modalVisible = false;
+    downloadTranslation() {
+      downloadFile("translation", this.translatedText);
+    },
+    handleInputValue(value) {
+      this.language = value;
+    },
+    cancelModal() {
+      if (this.$refs.modalWindowComponent) {
+        this.$refs.modalWindowComponent.modalVisible = false;
+      }
+      if (this.$refs.modalInputComponent) {
+        this.$refs.modalInputComponent.modalVisible = false;
+      }
     },
   },
   data() {
@@ -296,8 +296,13 @@ export default {
       analyzedSentimentText: "",
       analyzedSentimentTextTitle: "Sentiment Analysis Preview",
       noAnalyzedSentimentTextMessage: "No sentiment analysis is available",
-      // translatedText: null,
+      translatedText: "",
+      translatedTextInputTitle: "Language Input",
+      translatedTextInputLabel: "Enter Language:",
+      translatedTextInputPlaceholder: "e.g., French, Spanish",
       language: "",
+      translatedTextTitle: "Translated Text Preview",
+      noTranslatedTextMessage: "No translation is available",
     };
   },
   created() {

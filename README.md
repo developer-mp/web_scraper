@@ -1,6 +1,6 @@
 ### Web Scraper
 
-Web Scraper is an application engineered to navigate through the web and extract text from a website based on user-defined keywords. This tool streamlines the process of gathering information from the internet, enabling users to compile data efficiently. In addition to its core functionality, Web Scraper is enhanced with powerful text manipulation capabilities using advanced AI technologies provided by OpenAI's ChatGPT. These functionalities include summarization, sentiment analysis, and translation, all of which can be performed on the extracted text. Additionally, users have the option to save the results in a file, making data management and utilization more convenient.
+Web Scraper is an application engineered to navigate through the web and extract text from a website based on user-defined keywords. This tool streamlines the process of gathering information from the internet, enabling users to compile data efficiently. In addition to its core functionality, Web Scraper is enhanced with powerful text manipulation capabilities using advanced AI technologies provided by Google's Gemini API. These functionalities include summarization, sentiment analysis, and translation, all of which can be performed on the extracted text. Additionally, users have the option to save the results in a file, making data management and utilization more convenient.
 
 ### Architecture & Design
 

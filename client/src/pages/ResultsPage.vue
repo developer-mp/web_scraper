@@ -15,17 +15,6 @@
           <template v-slot:cell(attachments)="">
             <div class="attachment-icons">
               <i class="fa-solid fa-file" v-b-tooltip title="Download"></i>
-              <!-- <i class="fa-solid fa-list" v-b-tooltip title="Summary"></i> -->
-              <!-- <i
-                class="fa-solid fa-chart-simple"
-                v-b-tooltip
-                title="Analysis"
-              ></i> -->
-              <!-- <i
-                class="fa-solid fa-language"
-                v-b-tooltip
-                title="Translation"
-              ></i> -->
             </div>
           </template>
           <template v-slot:cell(actions)="data">

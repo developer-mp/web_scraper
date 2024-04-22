@@ -1,5 +1,5 @@
 <template>
-  <b-modal :title="modalTitle" hide-footer v-model="modalVisible">
+  <b-modal :title="modalTitle" v-model="modalVisible" hide-footer>
     <div v-if="modalText" style="text-align: justify; text-justify: auto">
       {{ modalText }}
     </div>
