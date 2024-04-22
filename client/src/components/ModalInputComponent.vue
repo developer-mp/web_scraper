@@ -11,7 +11,7 @@
     </b-form>
     <div class="button-container">
       <b-button variant="primary" @click="confirmOperation" class="button mt-3"
-        >Done</b-button
+        >OK</b-button
       >
       <b-button variant="secondary" @click="cancelOperation" class="button mt-3"
         >Cancel</b-button

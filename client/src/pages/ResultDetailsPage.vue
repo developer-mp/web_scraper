@@ -82,7 +82,7 @@
       :inputPlaceholder="translatedTextInputPlaceholder"
       @confirm="translateText"
       @cancel="cancelModal"
-      @input="handleInputValue"
+      @input="handleLanguageValue"
     />
     <ModalWindowComponent
       ref="translationModal"
@@ -276,7 +276,7 @@ export default {
     downloadTranslation() {
       downloadFile("translation", this.translatedText);
     },
-    handleInputValue(value) {
+    handleLanguageValue(value) {
       this.language = value;
     },
     cancelModal() {

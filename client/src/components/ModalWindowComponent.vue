@@ -6,7 +6,7 @@
     <div v-else>{{ modalMessage }}</div>
     <div class="button-container">
       <b-button variant="primary" class="button mt-3" @click="confirmOperation"
-        >Save</b-button
+        >OK</b-button
       >
       <b-button class="button mt-3" variant="secondary" @click="cancelOperation"
         >Cancel</b-button

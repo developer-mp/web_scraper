@@ -28,86 +28,24 @@
           >
         </div>
       </div>
-      <b-modal
-        v-model="showPreviewModal"
-        id="previewModal"
-        title="Preview Results"
-        hide-footer
-      >
-        <div class="preview-results">
-          <div v-if="!showPreviewResults">
-            <div>The scraping process has been completed successfully.</div>
-            <div>Do you want to preview the results?</div>
-          </div>
-          <div
-            v-if="showPreviewResults"
-            style="text-align: justify; text-justify: auto"
-          >
-            <div v-if="Array.isArray(sentences) && sentences.length > 0">
-              <p
-                v-for="(sentence, index) in sentences.slice(0, 2)"
-                :key="index"
-              >
-                {{ sentence }}
-              </p>
-            </div>
-            <div v-else>No sentences found for the given keywords</div>
-          </div>
-        </div>
-        <div class="button-container">
-          <b-button
-            v-if="!showPreviewResults"
-            class="button mt-3"
-            variant="primary"
-            @click="previewResults"
-            >Preview</b-button
-          >
-          <b-button
-            v-if="showPreviewResults"
-            class="button mt-3"
-            variant="primary"
-            @click="saveResults"
-            >Save</b-button
-          >
-          <b-button
-            class="button mt-3"
-            variant="secondary"
-            @click="cancelPreview"
-            >Cancel</b-button
-          >
-        </div>
-      </b-modal>
-      <b-modal v-model="showSaveModal" title="Save Results" hide-footer>
-        <b-form @submit.prevent="saveResults">
-          <b-form-group
-            id="resultName"
-            label="Result Name"
-            label-for="resultNameInput"
-          >
-            <b-form-input
-              id="resultNameInput"
-              v-model="resultName"
-              type="text"
-              required
-            ></b-form-input>
-          </b-form-group>
-          <div class="button-container">
-            <b-button
-              type="submit"
-              variant="primary"
-              @click="doneResults"
-              class="button mt-3"
-              >Done</b-button
-            >
-            <b-button
-              variant="secondary"
-              @click="cancelSave"
-              class="button mt-3"
-              >Cancel</b-button
-            >
-          </div>
-        </b-form>
-      </b-modal>
+      <ModalWindowComponent
+        ref="scrapingPreviewResultsModal"
+        :modalTitle="scrapingPreviewResultsTitle"
+        :modalText="sentences.join(', ')"
+        :modalMessage="noScrapingPreviewResultsMessage"
+        @confirm="showSaveResultsModal"
+        @cancel="cancelModal"
+      />
+      <ModalInputComponent
+        ref="scrapingSaveResultsModal"
+        :modalTitle="scrapingSaveResultsTitle"
+        :inputLabel="scrapingSaveResultsLabel"
+        :inputValue="resultName"
+        :inputPlaceholder="scrapingSaveResultsPlaceholder"
+        @confirm="saveScrapingResults"
+        @cancel="cancelModal"
+        @input="handleResultName"
+      />
     </div>
     <FooterComponent />
   </div>
@@ -159,22 +97,29 @@
 import axios from "axios";
 import FooterComponent from "./../components/FooterComponent.vue";
 import NavBarComponent from "./../components/NavBarComponent.vue";
+import ModalWindowComponent from "./../components/ModalWindowComponent.vue";
+import ModalInputComponent from "./../components/ModalInputComponent.vue";
 import router from "./../router";
 
 export default {
   components: {
     FooterComponent,
     NavBarComponent,
+    ModalWindowComponent,
+    ModalInputComponent,
   },
   data() {
     return {
       url: "",
       keywords: [],
-      showPreviewModal: false,
-      showPreviewResults: false,
       sentences: [],
-      showSaveModal: false,
       resultName: "",
+      scrapingPreviewResultsTitle: "Scraping Results Preview",
+      noScrapingPreviewResultsMessage:
+        "No sentences found for the given keywords",
+      scrapingSaveResultsTitle: "Save Scraping Results",
+      scrapingSaveResultsLabel: "Enter Result Name:",
+      scrapingSaveResultsPlaceholder: "",
     };
   },
   computed: {
@@ -193,7 +138,7 @@ export default {
           }
         );
         this.sentences = response.data;
-        this.showPreviewModal = true;
+        this.$refs.scrapingPreviewResultsModal.showModal();
       } catch (error) {
         console.error("Error:", error);
       }
@@ -202,20 +147,10 @@ export default {
       this.url = "";
       this.keywords = [];
     },
-    previewResults() {
-      this.showPreviewResults = true;
+    showSaveResultsModal() {
+      this.$refs.scrapingSaveResultsModal.showModal();
     },
-    cancelPreview() {
-      this.showPreviewResults = false;
-      this.$bvModal.hide("previewModal");
-    },
-    cancelSave() {
-      this.showSaveModal = false;
-    },
-    saveResults() {
-      this.showSaveModal = true;
-    },
-    async doneResults() {
+    async saveScrapingResults() {
       try {
         await axios.post("http://localhost:8080/api/v1/results", {
           url: this.url,
@@ -227,6 +162,17 @@ export default {
       } catch (error) {
         console.error("Error:", error);
       }
+    },
+    cancelModal() {
+      if (this.$refs.scrapingPreviewResultsModal) {
+        this.$refs.scrapingPreviewResultsModal.modalVisible = false;
+      }
+      if (this.$refs.scrapingSaveResultsModal) {
+        this.$refs.scrapingSaveResultsModal.modalVisible = false;
+      }
+    },
+    handleResultName(value) {
+      this.resultName = value;
     },
   },
 };
