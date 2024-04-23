@@ -49,4 +49,8 @@ export default {
   justify-content: space-between;
   margin-top: 1em;
 }
+
+.button {
+  width: 5em;
+}
 </style>

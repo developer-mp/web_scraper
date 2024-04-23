@@ -36,6 +36,18 @@
   </div>
 </template>
 
+<script>
+import FooterComponent from "./../components/FooterComponent.vue";
+import NavBarComponent from "./../components/NavBarComponent.vue";
+
+export default {
+  components: {
+    FooterComponent,
+    NavBarComponent,
+  },
+};
+</script>
+
 <style>
 .container-about {
   display: flex;
@@ -58,15 +70,3 @@
   margin-top: 1em;
 }
 </style>
-
-<script>
-import FooterComponent from "./../components/FooterComponent.vue";
-import NavBarComponent from "./../components/NavBarComponent.vue";
-
-export default {
-  components: {
-    FooterComponent,
-    NavBarComponent,
-  },
-};
-</script>

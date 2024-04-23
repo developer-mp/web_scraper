@@ -35,6 +35,57 @@
   </div>
 </template>
 
+<script>
+import { mapGetters, mapActions } from "vuex";
+import FooterComponent from "./../components/FooterComponent.vue";
+import NavBarComponent from "./../components/NavBarComponent.vue";
+
+export default {
+  components: {
+    FooterComponent,
+    NavBarComponent,
+  },
+  data() {
+    return {
+      fields: [
+        { key: "id", label: "Id" },
+        { key: "resultName", label: "Result Name", thClass: "results-column" },
+        { key: "date", label: "Date", thClass: "results-column" },
+        { key: "attachments", label: "Attachments" },
+        { key: "actions", label: "Actions" },
+      ],
+    };
+  },
+  computed: {
+    ...mapGetters(["getResults"]),
+    results() {
+      return this.getResults;
+    },
+  },
+  methods: {
+    ...mapActions(["fetchResults"]),
+    async deleteResult(item) {
+      try {
+        await this.$store.dispatch("deleteResult", item.resultId);
+      } catch (error) {
+        console.error("Error clicking Delete button:", error);
+      }
+    },
+    clickRow(item) {
+      this.$router.push({
+        name: "ResultDetails",
+        params: {
+          id: item.id,
+        },
+      });
+    },
+  },
+  created() {
+    this.fetchResults();
+  },
+};
+</script>
+
 <style>
 .container-results {
   display: flex;
@@ -65,54 +116,3 @@
   margin-top: 20px;
 }
 </style>
-
-<script>
-import { mapGetters, mapActions } from "vuex";
-import FooterComponent from "./../components/FooterComponent.vue";
-import NavBarComponent from "./../components/NavBarComponent.vue";
-
-export default {
-  components: {
-    FooterComponent,
-    NavBarComponent,
-  },
-  computed: {
-    ...mapGetters(["getResults"]),
-    results() {
-      return this.getResults;
-    },
-  },
-  data() {
-    return {
-      fields: [
-        { key: "id", label: "Id" },
-        { key: "resultName", label: "Result Name", thClass: "results-column" },
-        { key: "date", label: "Date", thClass: "results-column" },
-        { key: "attachments", label: "Attachments" },
-        { key: "actions", label: "Actions" },
-      ],
-    };
-  },
-  methods: {
-    ...mapActions(["fetchResults"]),
-    async deleteResult(item) {
-      try {
-        await this.$store.dispatch("deleteResult", item.resultId);
-      } catch (error) {
-        console.error("Error clicking Delete button:", error);
-      }
-    },
-    clickRow(item) {
-      this.$router.push({
-        name: "ResultDetails",
-        params: {
-          id: item.id,
-        },
-      });
-    },
-  },
-  created() {
-    this.fetchResults();
-  },
-};
-</script>

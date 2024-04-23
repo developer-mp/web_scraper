@@ -15,18 +15,13 @@
           type="text"
           placeholder="Add a keyword"
         ></b-form-tags>
-        <div class="button-container">
-          <b-button
-            @click="submitLink"
-            variant="primary"
-            class="button"
-            :disabled="isSubmitDisabled"
-            >Submit</b-button
-          >
-          <b-button @click="clearFields" variant="secondary" class="button"
-            >Clear</b-button
-          >
-        </div>
+        <ButtonGroupComponent
+          :is-disabled="isSubmitDisabled"
+          confirm-button-label="Submit"
+          cancel-button-label="Clear"
+          @confirm="submitLink"
+          @cancel="clearFields"
+        />
       </div>
       <ModalWindowComponent
         ref="scrapingPreviewResultsModal"
@@ -51,54 +46,13 @@
   </div>
 </template>
 
-<style>
-.container-main {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.main-header {
-  margin-top: 1em;
-  margin-bottom: 1em;
-}
-
-.form-wrapper {
-  width: 40%;
-}
-
-.form-input {
-  margin-bottom: 1em;
-}
-
-.button-container {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 1em;
-}
-
-.button {
-  width: 5em;
-}
-
-.preview-results {
-  min-height: 7em;
-  min-width: 10em !important;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-</style>
-
 <script>
 import axios from "axios";
 import FooterComponent from "./../components/FooterComponent.vue";
 import NavBarComponent from "./../components/NavBarComponent.vue";
 import ModalWindowComponent from "./../components/ModalWindowComponent.vue";
 import ModalInputComponent from "./../components/ModalInputComponent.vue";
+import ButtonGroupComponent from "./../components/ButtonGroupComponent.vue";
 import router from "./../router";
 
 export default {
@@ -107,6 +61,7 @@ export default {
     NavBarComponent,
     ModalWindowComponent,
     ModalInputComponent,
+    ButtonGroupComponent,
   },
   data() {
     return {
@@ -177,3 +132,25 @@ export default {
   },
 };
 </script>
+
+<style>
+.container-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.main-header {
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
+.form-wrapper {
+  width: 40%;
+}
+
+.form-input {
+  margin-bottom: 1em;
+}
+</style>

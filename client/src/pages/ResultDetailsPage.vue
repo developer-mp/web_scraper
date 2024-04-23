@@ -96,60 +96,6 @@
   </div>
 </template>
 
-<style>
-.container-details {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-.details-header {
-  margin-top: 1em;
-  margin-bottom: 1em;
-}
-
-.details-list {
-  list-style-type: none;
-}
-
-.details-list li {
-  text-align: left;
-}
-
-.details-list li strong {
-  display: inline-block;
-  width: 10em;
-}
-
-.details-buttons-group {
-  margin-bottom: 1em;
-}
-
-.details-button {
-  width: 6em;
-  margin-right: 0.5em;
-}
-
-.details-card {
-  list-style-type: none;
-}
-
-.details-card li strong {
-  display: inline-block;
-  width: 15em;
-}
-
-.details-card-container * {
-  padding: 0;
-}
-
-.button-container {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 1em;
-}
-</style>
-
 <script>
 import { mapGetters, mapActions } from "vuex";
 import FooterComponent from "./../components/FooterComponent.vue";
@@ -170,6 +116,23 @@ export default {
     NavBarComponent,
     ModalWindowComponent,
     ModalInputComponent,
+  },
+  data() {
+    return {
+      summarizedText: "",
+      summarizedTextTitle: "Summarized Text Preview",
+      noSummarizedTextMessage: "No summarized text is available",
+      analyzedSentimentText: "",
+      analyzedSentimentTextTitle: "Sentiment Analysis Preview",
+      noAnalyzedSentimentTextMessage: "No sentiment analysis is available",
+      translatedText: "",
+      translatedTextInputTitle: "Language Input",
+      translatedTextInputLabel: "Enter Language:",
+      translatedTextInputPlaceholder: "e.g., French, Spanish",
+      language: "",
+      translatedTextTitle: "Translated Text Preview",
+      noTranslatedTextMessage: "No translation is available",
+    };
   },
   computed: {
     ...mapGetters(["getResults"]),
@@ -288,25 +251,62 @@ export default {
       }
     },
   },
-  data() {
-    return {
-      summarizedText: "",
-      summarizedTextTitle: "Summarized Text Preview",
-      noSummarizedTextMessage: "No summarized text is available",
-      analyzedSentimentText: "",
-      analyzedSentimentTextTitle: "Sentiment Analysis Preview",
-      noAnalyzedSentimentTextMessage: "No sentiment analysis is available",
-      translatedText: "",
-      translatedTextInputTitle: "Language Input",
-      translatedTextInputLabel: "Enter Language:",
-      translatedTextInputPlaceholder: "e.g., French, Spanish",
-      language: "",
-      translatedTextTitle: "Translated Text Preview",
-      noTranslatedTextMessage: "No translation is available",
-    };
-  },
   created() {
     this.fetchResults();
   },
 };
 </script>
+
+<style>
+.container-details {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.details-header {
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
+.details-list {
+  list-style-type: none;
+}
+
+.details-list li {
+  text-align: left;
+}
+
+.details-list li strong {
+  display: inline-block;
+  width: 10em;
+}
+
+.details-buttons-group {
+  margin-bottom: 1em;
+}
+
+.details-button {
+  width: 6em;
+  margin-right: 0.5em;
+}
+
+.details-card {
+  list-style-type: none;
+}
+
+.details-card li strong {
+  display: inline-block;
+  width: 15em;
+}
+
+.details-card-container * {
+  padding: 0;
+}
+
+.button-container {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1em;
+}
+</style>
