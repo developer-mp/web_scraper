@@ -12,9 +12,15 @@
           @row-clicked="clickRow"
           class="results-column"
         >
-          <template v-slot:cell(attachments)="">
+          <template v-slot:cell(attachments)="data">
             <div class="attachment-icons">
-              <i class="fa-solid fa-file" v-b-tooltip title="Download"></i>
+              <i
+                class="fa-solid fa-file"
+                v-b-tooltip
+                title="Download"
+                @click="downloadResults(data.item)"
+                @click.stop
+              ></i>
             </div>
           </template>
           <template v-slot:cell(actions)="data">
@@ -39,6 +45,7 @@
 import { mapGetters, mapActions } from "vuex";
 import FooterComponent from "./../components/FooterComponent.vue";
 import NavBarComponent from "./../components/NavBarComponent.vue";
+import { downloadFile } from "./../utils/downloadFile.js";
 
 export default {
   components: {
@@ -48,9 +55,19 @@ export default {
   data() {
     return {
       fields: [
-        { key: "id", label: "Id" },
-        { key: "resultName", label: "Result Name", thClass: "results-column" },
-        { key: "date", label: "Date", thClass: "results-column" },
+        { key: "id", label: "Id", sortable: true },
+        {
+          key: "resultName",
+          label: "Result Name",
+          thClass: "results-column",
+          sortable: true,
+        },
+        {
+          key: "date",
+          label: "Date",
+          thClass: "results-column",
+          sortable: true,
+        },
         { key: "attachments", label: "Attachments" },
         { key: "actions", label: "Actions" },
       ],
@@ -78,6 +95,9 @@ export default {
           id: item.id,
         },
       });
+    },
+    downloadResults(item) {
+      downloadFile("results", item.text);
     },
   },
   created() {

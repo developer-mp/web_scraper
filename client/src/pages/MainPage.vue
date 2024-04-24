@@ -26,7 +26,7 @@
       <ModalWindowComponent
         ref="scrapingPreviewResultsModal"
         :modalTitle="scrapingPreviewResultsTitle"
-        :modalText="sentences.join(', ')"
+        :modalText="sentences.slice(0, 2).join(' ') + ' ...'"
         :modalMessage="noScrapingPreviewResultsMessage"
         @confirm="showSaveResultsModal"
         @cancel="cancelModal"
