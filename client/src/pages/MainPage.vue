@@ -47,7 +47,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import { mapActions } from "vuex";
 import FooterComponent from "./../components/FooterComponent.vue";
 import NavBarComponent from "./../components/NavBarComponent.vue";
 import ModalWindowComponent from "./../components/ModalWindowComponent.vue";
@@ -83,19 +83,17 @@ export default {
     },
   },
   methods: {
+    ...mapActions(["submitLink", "saveResults"]),
     async submitLink() {
       try {
-        const response = await axios.post(
-          "http://localhost:8080/api/v1/scrape",
-          {
-            url: this.url,
-            keywords: this.keywords.map((keyword) => keyword.toLowerCase()),
-          }
-        );
-        this.sentences = response.data;
+        const data = await this.$store.dispatch("submitLink", {
+          url: this.url,
+          keywords: this.keywords,
+        });
+        this.sentences = data;
         this.$refs.scrapingPreviewResultsModal.showModal();
       } catch (error) {
-        console.error("Error:", error);
+        console.error("Error submitting scraping results: ", error);
       }
     },
     clearFields() {
@@ -107,7 +105,7 @@ export default {
     },
     async saveScrapingResults() {
       try {
-        await axios.post("http://localhost:8080/api/v1/results", {
+        await this.$store.dispatch("saveResults", {
           url: this.url,
           keywords: this.keywords,
           resultName: this.resultName,
@@ -115,7 +113,7 @@ export default {
         });
         router.push("/results");
       } catch (error) {
-        console.error("Error:", error);
+        console.error("Error saving scraping results: ", error);
       }
     },
     cancelModal() {
