@@ -4219,6 +4219,11 @@ log-update@^2.3.0:
     cli-cursor "^2.0.0"
     wrap-ansi "^3.0.1"
 
+loggly-jslogger@^2.2.4:
+  version "2.2.4"
+  resolved "https://registry.yarnpkg.com/loggly-jslogger/-/loggly-jslogger-2.2.4.tgz#db6f64c43d6ad9d4a1778d9eb2f7ad2559780bce"
+  integrity sha512-3VttLHnmz1RdfJHP4x8ALsTwDt0ONqrgfV9B1y6UTijP9TWwNGKqdjK0P7FfoEEEM3Fmg2/pmmOA92U20YKRTw==
+
 lower-case@^2.0.2:
   version "2.0.2"
   resolved "https://registry.npmmirror.com/lower-case/-/lower-case-2.0.2.tgz"

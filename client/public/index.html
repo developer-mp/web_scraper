@@ -7,8 +7,21 @@
     <link rel="icon" href="<%= BASE_URL %>favicon.png" />
     <link href="assets/styles.css" />
     <title>Web Scraper</title>
+    <script
+      type="text/javascript"
+      src="https://cloudfront.loggly.com/js/loggly.tracker-latest.min.js"
+      async
+    ></script>
   </head>
   <body>
     <div id="app"></div>
+    <script>
+      var logger = logger || [];
+      logger.push({
+        logglyKey: "e5efab8f-e732-4bba-9a1f-ad572a6c3a47",
+        sendConsoleErrors: true,
+        tag: "frontend",
+      });
+    </script>
   </body>
 </html>

@@ -1,2 +1,5 @@
 # config files
 appconfig.json
+
+# local env files
+.env.development
