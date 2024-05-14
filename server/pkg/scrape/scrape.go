@@ -13,6 +13,15 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+func ScrapeWebpageAsync(url string, keywords []string, results chan<- []string) {
+	sentences, err := ScrapeWebpage(url, keywords)
+	if err != nil {
+		results <- []string{}
+		return
+	}
+	results <- sentences
+}
+
 func DisplayScrapingResults(c *gin.Context) {
 	var form struct {
 		URL      string   `form:"url"`
@@ -24,14 +33,38 @@ func DisplayScrapingResults(c *gin.Context) {
 		return
 	}
 
-	sentences, err := ScrapeWebpage(form.URL, form.Keywords)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate scraping results: " + err.Error()})
-		return
-	}
+	results := make(chan []string)
+	defer close(results)
 
-	c.JSON(http.StatusOK, sentences)
+	go ScrapeWebpageAsync(form.URL, form.Keywords, results)
+
+	select {
+	case sentences := <-results:
+		c.JSON(http.StatusOK, sentences)
+	case <-time.After(10 * time.Second):
+		c.JSON(http.StatusRequestTimeout, gin.H{"error": "Scraping request timed out"})
+	}
 }
+
+// func DisplayScrapingResults(c *gin.Context) {
+// 	var form struct {
+// 		URL      string   `form:"url"`
+// 		Keywords []string `form:"keywords"`
+// 	}
+
+// 	if err := c.Bind(&form); err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request data: " + err.Error()})
+// 		return
+// 	}
+
+// 	sentences, err := ScrapeWebpage(form.URL, form.Keywords)
+// 	if err != nil {
+// 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate scraping results: " + err.Error()})
+// 		return
+// 	}
+
+// 	c.JSON(http.StatusOK, sentences)
+// }
 
 func ScrapeWebpage(url string, keywords []string) ([]string, error) {
 	var sentences []string
