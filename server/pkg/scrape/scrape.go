@@ -1,6 +1,7 @@
 package scrape
 
 import (
+	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -46,28 +47,16 @@ func DisplayScrapingResults(c *gin.Context) {
 	}
 }
 
-// func DisplayScrapingResults(c *gin.Context) {
-// 	var form struct {
-// 		URL      string   `form:"url"`
-// 		Keywords []string `form:"keywords"`
-// 	}
-
-// 	if err := c.Bind(&form); err != nil {
-// 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request data: " + err.Error()})
-// 		return
-// 	}
-
-// 	sentences, err := ScrapeWebpage(form.URL, form.Keywords)
-// 	if err != nil {
-// 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate scraping results: " + err.Error()})
-// 		return
-// 	}
-
-// 	c.JSON(http.StatusOK, sentences)
-// }
-
 func ScrapeWebpage(url string, keywords []string) ([]string, error) {
 	var sentences []string
+
+    dbDuplicate, err := dynamodb.CheckForDuplicate(url, keywords)
+    if err != nil {
+        return nil, err
+    }
+    if dbDuplicate {
+        return nil, fmt.Errorf("duplicate article found for URL: %s", url)
+    }
 
 	response, err := http.Get(url)
 	if err != nil {
@@ -138,11 +127,6 @@ func GetScrapingResults(c *gin.Context) {
 	results, err := dynamodb.GetResults()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve results from database: " + err.Error()})
-		return
-	}
-
-	if len(results) == 0 {
-		c.JSON(http.StatusOK, gin.H{"message": "No results found"})
 		return
 	}
 

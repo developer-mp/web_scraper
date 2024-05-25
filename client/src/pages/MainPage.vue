@@ -26,8 +26,7 @@
       <ModalWindowComponent
         ref="scrapingPreviewResultsModal"
         :modalTitle="scrapingPreviewResultsTitle"
-        :modalText="sentences.slice(0, 2).join(' ') + ' ...'"
-        :modalMessage="noScrapingPreviewResultsMessage"
+        :modalText="modalText"
         @confirm="showSaveResultsModal"
         @cancel="cancelModal"
       />
@@ -70,8 +69,8 @@ export default {
       sentences: [],
       resultName: "",
       scrapingPreviewResultsTitle: "Scraping Results Preview",
-      noScrapingPreviewResultsMessage:
-        "No sentences found for the given keywords",
+      // noScrapingPreviewResultsMessage:
+      //   "No sentences found for the given keywords",
       scrapingSaveResultsTitle: "Save Scraping Results",
       scrapingSaveResultsLabel: "Enter Result Name:",
       scrapingSaveResultsPlaceholder: "",
@@ -80,6 +79,13 @@ export default {
   computed: {
     isSubmitDisabled() {
       return !this.url.trim() || this.keywords.length == 0;
+    },
+    modalText() {
+      if (this.sentences && this.sentences.length > 0) {
+        return this.sentences.slice(0, 2).join(" ") + " ...";
+      } else {
+        return "No sentences found for the given keywords";
+      }
     },
   },
   methods: {

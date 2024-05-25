@@ -22,6 +22,57 @@ type ResultItem struct {
     Timestamp string   `json:"timestamp"`
 }
 
+func CheckForDuplicate(url string, keywords []string) (bool, error) {
+    AWSConfig, err := config.ReadAppConfig("appconfig.json")
+    if err != nil {
+        return false, err
+    }
+
+    sess := session.Must(session.NewSession(&aws.Config{
+        Region: aws.String(AWSConfig.AWS.AWSRegion),
+        Credentials: credentials.NewStaticCredentials(
+            AWSConfig.AWS.AWSAccessKeyID,
+            AWSConfig.AWS.AWSSecretAccessKey,
+            "",
+        ),
+    }))
+
+    svc := dynamodb.New(sess)
+
+    var dbKeywords []*dynamodb.AttributeValue
+    for _, keyword := range keywords {
+        dbKeywords = append(dbKeywords, &dynamodb.AttributeValue{S: aws.String(keyword)})
+    }
+
+    params := &dynamodb.ScanInput{
+        TableName:        aws.String("results"),
+        FilterExpression: aws.String("#link = :url AND #keywords = :keywords"),
+        ExpressionAttributeNames: map[string]*string{
+            "#link":     aws.String("link"),
+            "#keywords": aws.String("keywords"),
+        },
+        ExpressionAttributeValues: map[string]*dynamodb.AttributeValue{
+            ":url": {
+                S: aws.String(url),
+            },
+            ":keywords": {
+                L: dbKeywords,
+            },
+        },
+    }
+
+    result, err := svc.Scan(params)
+    if err != nil {
+        return false, err
+    }
+
+    if len(result.Items) > 0 {
+        return true, nil
+    }
+
+    return false, nil
+}
+
 func SaveResults(link string, keywords []string, resultName string, sentences []string, resultID, timestamp string) error {
     AWSConfig, err := config.ReadAppConfig("appconfig.json")
     if err != nil {

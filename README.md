@@ -9,7 +9,10 @@ The architecture and design of the Web Scraper application incorporate a robust 
 On the frontend, Vue.js is employed, which provides a reactive and composable user interface architecture. This makes it particularly suitable for building dynamic web applications that require real-time updates, such as a web scraping tool.
 
 For data storage, the application uses Amazon DynamoDB, a highly scalable NoSQL database service. This choice ensures quick access to scraped data results and reliable performance under varying loads. Additionally, Redis is integrated into the system for caching purposes. It employs a Read-Through and Write-Through Caching strategy. This approach ensures that data read requests first check the cache; if the requested data is not found, it is retrieved from the primary store, cached for future access, and then returned to the user. Write operations, on the other hand, simultaneously update the data in the cache and the primary store. This significantly enhances the application's responsiveness and efficiency by reducing the load on the database and speeding up data retrieval processes.
+
 The application leverages asynchronous programming techniques to perform scraping tasks concurrently, enhancing performance and efficiency. This approach allows multiple scraping operations to be executed simultaneously, preventing blocking and maximizing resource utilization. By utilizing goroutines and channels in Go, the application can handle scraping requests concurrently without sacrificing responsiveness.
+
+Additionally, this application includes Data Deduplication to avoid scraping duplicate data by implementing mechanisms to detect and skip redundant information.
 
 ### Features
 

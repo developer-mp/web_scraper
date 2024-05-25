@@ -1,9 +1,8 @@
 <template>
   <b-modal :title="modalTitle" v-model="modalVisible" hide-footer>
-    <div v-if="modalText" style="text-align: justify; text-justify: auto">
+    <div style="text-align: justify; text-justify: auto">
       {{ modalText }}
     </div>
-    <div v-else>{{ modalMessage }}</div>
     <div class="button-container">
       <b-button variant="primary" class="button mt-3" @click="confirmOperation"
         >OK</b-button
