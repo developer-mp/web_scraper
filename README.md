@@ -12,7 +12,7 @@ For data storage, the application uses Amazon DynamoDB, a highly scalable NoSQL 
 
 The application leverages asynchronous programming techniques to perform scraping tasks concurrently, enhancing performance and efficiency. This approach allows multiple scraping operations to be executed simultaneously, preventing blocking and maximizing resource utilization. By utilizing goroutines and channels in Go, the application can handle scraping requests concurrently without sacrificing responsiveness.
 
-Additionally, this application includes Data Deduplication to avoid scraping duplicate data by implementing mechanisms to detect and skip redundant information.
+Additionally, this application includes Data Deduplication to avoid scraping duplicate data by implementing mechanisms to detect and skip redundant information. Rate Limiting and Throttling mechanisms are implemented to prevent the application from overwhelming the target website's servers and getting banned.
 
 ### Features
 

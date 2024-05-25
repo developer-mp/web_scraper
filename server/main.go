@@ -6,12 +6,15 @@ import (
 	"server/pkg/redisdb"
 	"server/pkg/scrape"
 
+	"net/http"
+
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"github.com/redis/go-redis/v9"
 	"github.com/sebest/logrusly"
 	"github.com/sirupsen/logrus"
+	"golang.org/x/time/rate"
 )
 
 var logglyToken string
@@ -19,6 +22,19 @@ var host string
 var clientPort string
 var serverPort string
 var redisPort string
+
+// Rate limiter allowing 10 requests per second with bursts of up to 5 requests
+var limiter = rate.NewLimiter(10, 5)
+
+func rateLimitMiddleware() gin.HandlerFunc {
+    return func(c *gin.Context) {
+        if !limiter.Allow() {
+            c.AbortWithStatusJSON(http.StatusTooManyRequests, gin.H{"error": "Too many requests"})
+            return
+        }
+        c.Next()
+    }
+}
 
 func main() {
 	l := logrus.New()
@@ -45,6 +61,7 @@ func main() {
 
 	redisdb.InitializeClient(redisClient)
 	router := gin.Default()
+	router.Use(rateLimitMiddleware())
 	router.Use(cors.New(cors.Config{
     AllowOrigins:     []string{"http://" + host + ":" + clientPort},
     AllowMethods:     []string{"GET", "POST", "DELETE", "OPTIONS"},
