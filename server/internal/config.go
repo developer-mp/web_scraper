@@ -5,25 +5,23 @@ import (
 	"os"
 )
 
-type AppConfig struct {
-	AWS struct {
-		AWSAccessKeyID     string `json:"aws_access_key_id"`
-		AWSSecretAccessKey string `json:"aws_secret_access_key"`
-		AWSRegion          string `json:"aws_region"`
-	} `json:"AWS"`
+type ProxyConfig struct {
+	Proxy struct {
+		ProxyServer string `json:"proxy_server"`
+	} `json:"Proxy"`
 }
 
-func ReadAppConfig(filename string) (*AppConfig, error) {
+func ReadProxyConfig(filename string) (*ProxyConfig, error) {
     data, err := os.ReadFile(filename)
     if err != nil {
         return nil, err
     }
 
-    var appConfig  AppConfig
-    err = json.Unmarshal(data, &appConfig)
+    var proxyConfig ProxyConfig
+    err = json.Unmarshal(data, &proxyConfig)
     if err != nil {
         return nil, err
     }
 
-    return &appConfig, nil
+    return &proxyConfig, nil
 }

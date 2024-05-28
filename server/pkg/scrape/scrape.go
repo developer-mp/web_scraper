@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	proxy "server/internal/proxy"
 	dynamodb "server/pkg/dynamodb"
 	redisdb "server/pkg/redisdb"
 	hash "server/utils"
@@ -58,9 +59,11 @@ func ScrapeWebpage(url string, keywords []string) ([]string, error) {
         return nil, fmt.Errorf("duplicate article found for URL: %s", url)
     }
 
-	response, err := http.Get(url)
+	//response, err := http.Get(url)
+	response, err := proxy.ScrapeWithProxy(url)
 	if err != nil {
-		return nil, err
+		//return nil, err
+		return nil, fmt.Errorf("error making request with proxy: %v", err)
 	}
 	defer response.Body.Close()
 

@@ -4,15 +4,20 @@ Web Scraper is an application engineered to navigate through the web and extract
 
 ### Architecture & Design
 
-The architecture and design of the Web Scraper application incorporate a robust and efficient tech stack that ensures optimal performance and scalability. The backend is built using Go (Golang), known for its high performance and efficiency in handling concurrent tasks. For parsing and manipulating HTML documents, the backend utilizes goquery, a powerful library that simplifies DOM traversal and manipulation in Go.
+The architecture and design of the Web Scraper application incorporate a robust and efficient tech stack that ensures optimal performance and scalability:
 
-On the frontend, Vue.js is employed, which provides a reactive and composable user interface architecture. This makes it particularly suitable for building dynamic web applications that require real-time updates, such as a web scraping tool.
+- **Backend Technology**: Built using Go (Golang), known for its high performance and efficiency in handling concurrent tasks.
+- **HTML Parsing**: Utilizes goquery, a powerful library that simplifies DOM traversal and manipulation in Go, for parsing and manipulating HTML documents.
+- **Frontend Framework**: Employs Vue.js for the frontend, providing a reactive and composable user interface architecture suitable for dynamic web applications.
+- **Data Storage**: Relies on Amazon DynamoDB, a highly scalable NoSQL database service, ensuring quick access to scraped data results and reliable performance under varying loads.
+- **Caching Strategy**: Integrates Redis for caching purposes, employing a Read-Through and Write-Through Caching strategy to enhance responsiveness and efficiency.
+- **Asynchronous Programming**: Utilizes asynchronous programming techniques to perform scraping tasks concurrently, maximizing resource utilization and preventing blocking.
 
-For data storage, the application uses Amazon DynamoDB, a highly scalable NoSQL database service. This choice ensures quick access to scraped data results and reliable performance under varying loads. Additionally, Redis is integrated into the system for caching purposes. It employs a Read-Through and Write-Through Caching strategy. This approach ensures that data read requests first check the cache; if the requested data is not found, it is retrieved from the primary store, cached for future access, and then returned to the user. Write operations, on the other hand, simultaneously update the data in the cache and the primary store. This significantly enhances the application's responsiveness and efficiency by reducing the load on the database and speeding up data retrieval processes.
+Additionally, the application includes several key mechanisms for enhanced functionality and reliability:
 
-The application leverages asynchronous programming techniques to perform scraping tasks concurrently, enhancing performance and efficiency. This approach allows multiple scraping operations to be executed simultaneously, preventing blocking and maximizing resource utilization. By utilizing goroutines and channels in Go, the application can handle scraping requests concurrently without sacrificing responsiveness.
-
-Additionally, this application includes Data Deduplication to avoid scraping duplicate data by implementing mechanisms to detect and skip redundant information. Rate Limiting and Throttling mechanisms are implemented to prevent the application from overwhelming the target website's servers and getting banned.
+- **Data Deduplication**: Implements mechanisms to detect and skip redundant information, avoiding scraping duplicate data.
+- **Rate Limiting and Throttling**: Integrates mechanisms to prevent overwhelming the servers of the target website, mitigating the risk of being banned.
+- **Proxy Rotation**: Implements strategic distribution of requests across multiple IP addresses to avoid IP bans or detection.
 
 ### Features
 
