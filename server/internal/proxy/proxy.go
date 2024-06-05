@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
-	config "server/internal"
+	config "server/internal/config"
 	"sync"
 	"time"
 )

@@ -3,7 +3,7 @@ package dynamodb
 import (
 	"strings"
 
-	awsconfig "server/internal"
+	awsconfig "server/internal/config"
 	"server/pkg/models"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -23,7 +23,7 @@ type ResultItem struct {
 }
 
 func CheckForDuplicate(url string, keywords []string) (bool, error) {
-    AWSConfig, err := awsconfig.ReadAppConfig("appconfig.json")
+    AWSConfig, err := awsconfig.ReadAWSConfig("appconfig.json")
     if err != nil {
         return false, err
     }
@@ -74,7 +74,7 @@ func CheckForDuplicate(url string, keywords []string) (bool, error) {
 }
 
 func SaveResults(link string, keywords []string, resultName string, sentences []string, resultID, timestamp string) error {
-    AWSConfig, err := awsconfig.ReadAppConfig("appconfig.json")
+    AWSConfig, err := awsconfig.ReadAWSConfig("appconfig.json")
     if err != nil {
         return err
     }
@@ -118,7 +118,7 @@ func SaveResults(link string, keywords []string, resultName string, sentences []
 }
 
 func GetResults() ([]ResultItem, error) {
-	AWSConfig, err := awsconfig.ReadAppConfig("appconfig.json")
+	AWSConfig, err := awsconfig.ReadAWSConfig("appconfig.json")
 	if err != nil {
 		return nil, err
 	}
@@ -157,7 +157,7 @@ func GetResults() ([]ResultItem, error) {
 }
 
 func DeleteResult(resultId string) error {
-    AWSConfig, err := awsconfig.ReadAppConfig("appconfig.json")
+    AWSConfig, err := awsconfig.ReadAWSConfig("appconfig.json")
     if err != nil {
         return err
     }
